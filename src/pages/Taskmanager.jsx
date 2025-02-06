@@ -496,6 +496,7 @@ const handleDeleteTask = async (id) => {
                   description: formData.get("description"),
                   dueDate: formData.get("dueDate"),
                 };
+                console.log("form data",formData);
                 if (editingTask) {
                   handleEditTask(editingTask._id, task);
                 } else {
@@ -534,14 +535,24 @@ const handleDeleteTask = async (id) => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm">Due Day</label>
-                <input type="week"
-                  name="day"
-                  defaultValue={editingTask?.dueDate || ""}
-                  className="border bg-[#2C2B5A] p-2 rounded w-full"
-                  required
-                />
-              </div>
+  <label className="block text-sm">Due Day</label>
+  <select
+    name="day"
+    defaultValue={"Monday"}
+    className="border bg-[#2C2B5A] p-2 rounded w-full"
+    required
+  >
+    <option value="" disabled>Select a day</option>
+    <option value="monday">Monday</option>
+    <option value="tuesday">Tuesday</option>
+    <option value="wednesday">Wednesday</option>
+    <option value="thursday">Thursday</option>
+    <option value="friday">Friday</option>
+    <option value="saturday">Saturday</option>
+    <option value="sunday">Sunday</option>
+  </select>
+</div>
+
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
