@@ -115,6 +115,7 @@ const  [arrayOfTitle,serArrayOgtitle]=useState([]);
 
       ////////////////////console.log("API Response:", response.data);
       setLoading(false);
+      setReload(prev => !prev);
       dispatch(addTask({ ...task, id: Date.now(), status: "incomplete" }));
       toast.success("Task added successfully!", {
         position: "top-right",
