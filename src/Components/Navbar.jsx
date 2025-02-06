@@ -37,7 +37,7 @@ const navigator=useNavigate();
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <img
-            src=".\public\image\Screenshot 2025-02-01 140605.png"
+            src="/image/logo.png"
             alt="Logo"
             className="h-[40px] border-white border-2 rounded-sm hover:border-blue-950"
           />
