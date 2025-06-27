@@ -9,7 +9,8 @@ import { selectFilteredTasks } from "../redux/selectFilteredTasks";
 // Removed DragDropContext, Droppable, Draggable imports as per request
 // If 'react-beautiful-dnd' is still causing errors, ensure it's not accidentally imported elsewhere
 // import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
+// --- TaskFormModal Component ---
+// import { Mic, MicOff, X } from 'lucide-react';
 import { Search, PlusCircle, Mic, MicOff, X, CalendarDays } from 'lucide-react'; // Ensure 'lucide-react' is installed (npm install lucide-react)
 // Ensure 'react-simple-typewriter' is installed (npm install react-simple-typewriter)
 import { Typewriter } from "react-simple-typewriter";
@@ -388,7 +389,13 @@ const TaskList = ({ filteredTasks, setEditingTask, setModalOpen, handleToggleCom
   </div>
 );
 
-// --- TaskFormModal Component ---
+
+import dayjs from 'dayjs'; // Ensure dayjs is imported for date handling
+
+// Reusable Button component (assuming it's defined elsewhere or in the same file)
+
+
+
 const TaskFormModal = ({ isOpen, onClose, title, editingTask, handleAddTask, handleEditTask, speechTitle, setSpeechTitle, isListening, toggleListening, speechLang, setSpeechLang, speechDesc, setSpeechDesc, isDescListening, toggleDescListening, descLang, setDescLang, selectedDay, handleDateChange, isDarkMode }) => (
   <Modal isOpen={isOpen} onClose={onClose} title={title} isDarkMode={isDarkMode}>
     <form
@@ -408,89 +415,145 @@ const TaskFormModal = ({ isOpen, onClose, title, editingTask, handleAddTask, han
           handleAddTask(task);
         }
       }}
+      className="space-y-6" // Added space between form elements
     >
-      <div className="mb-4 relative flex items-center">
-        <label className={`block text-sm mr-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Title</label>
+      {/* Title Input */}
+      <div className="relative flex items-center group">
+        <label htmlFor="title" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
+          ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
+          peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
+          pointer-events-none z-10
+        `}>Title</label>
         <input
+          id="title"
           type="text"
           name="title"
           value={speechTitle || editingTask?.title || ""}
           onChange={e => setSpeechTitle(e.target.value)}
-          className={`border p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200
-            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-gray-500'}`}
+          className={`
+            peer border-2 p-3 rounded-xl w-full focus:outline-none focus:ring-3 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300
+            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-transparent' : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-transparent'}
+            shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
+          `}
+          placeholder=" " // Important for the label animation
           required
         />
         <button
           type="button"
-          className={`ml-2 p-2 rounded-full ${isListening ? 'bg-red-500' : 'bg-blue-500'} text-white transition-colors duration-200`}
+          className={`
+            ml-3 p-3 rounded-full text-white transition-colors duration-300 transform hover:scale-110 active:scale-95 shadow-md
+            ${isListening ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500' : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'}
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+          `}
           onClick={toggleListening}
           tabIndex={-1}
           aria-label="Start/Stop Speech to Text"
         >
-          {isListening ? <Mic /> : <MicOff />}
+          {isListening ? <Mic size={20} /> : <MicOff size={20} />}
         </button>
         <select
-          className={`ml-2 p-2 rounded border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200
-            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}`}
+          className={`
+            ml-3 p-3 rounded-xl border-2 focus:outline-none focus:ring-3 focus:ring-blue-500 transition-all duration-300
+            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}
+            shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
+          `}
           value={speechLang}
           onChange={e => setSpeechLang(e.target.value)}
-          style={{ minWidth: 80 }}
+          style={{ minWidth: 100 }}
           aria-label="Select language for speech to text"
         >
           <option value="en-US">English</option>
           <option value="hi-IN">हिन्दी</option>
         </select>
       </div>
-      <div className="mb-4 relative flex items-center">
-        <label className={`block text-sm mr-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Description</label>
+
+      {/* Description Input */}
+      <div className="relative flex items-center group">
+        <label htmlFor="description" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
+          ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
+          peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
+          pointer-events-none z-10
+        `}>Description</label>
         <textarea
+          id="description"
           name="description"
           value={speechDesc || editingTask?.description || ""}
           onChange={e => setSpeechDesc(e.target.value)}
-          className={`border p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200
-            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-gray-500'}`}
+          className={`
+            peer border-2 p-3 rounded-xl w-full focus:outline-none focus:ring-3 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 h-28 resize-y
+            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-transparent' : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-transparent'}
+            shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
+          `}
+          placeholder=" " // Important for the label animation
           required
         />
         <button
           type="button"
-          className={`ml-2 p-2 rounded-full ${isDescListening ? 'bg-red-500' : 'bg-blue-500'} text-white transition-colors duration-200`}
+          className={`
+            ml-3 self-start mt-3 p-3 rounded-full text-white transition-colors duration-300 transform hover:scale-110 active:scale-95 shadow-md
+            ${isDescListening ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500' : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'}
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+          `}
           onClick={toggleDescListening}
           tabIndex={-1}
           aria-label="Start/Stop Speech to Text for Description"
         >
-          {isDescListening ? <Mic /> : <MicOff />}
+          {isDescListening ? <Mic size={20} /> : <MicOff size={20} />}
         </button>
         <select
-          className={`ml-2 p-2 rounded border focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200
-            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}`}
+          className={`
+            ml-3 self-start mt-3 p-3 rounded-xl border-2 focus:outline-none focus:ring-3 focus:ring-blue-500 transition-all duration-300
+            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}
+            shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
+          `}
           value={descLang}
           onChange={e => setDescLang(e.target.value)}
-          style={{ minWidth: 80 }}
+          style={{ minWidth: 100 }}
           aria-label="Select language for speech to text (description)"
         >
           <option value="en-US">English</option>
           <option value="hi-IN">हिन्दी</option>
         </select>
       </div>
-      <div className="mb-4">
-        <label className={`block text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Due Date</label>
+
+      {/* Due Date Input */}
+      <div className="relative group">
+        <label htmlFor="dueDate" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
+          ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
+          peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
+          pointer-events-none z-10
+        `}>Due Date</label>
         <input
+          id="dueDate"
           type="date"
           name="dueDate"
           defaultValue={editingTask?.dueDate || ""}
-          className={`border p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200
-            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}`}
+          className={`
+            peer border-2 p-3 rounded-xl w-full focus:outline-none focus:ring-3 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300
+            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}
+            shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
+          `}
           required
           onChange={handleDateChange}
         />
       </div>
-      <div className="mb-4">
-        <label className={`block text-sm ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Due Day</label>
+
+      {/* Due Day Select (Read-only) */}
+      <div className="relative group">
+        <label htmlFor="dueDay" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
+          ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
+          peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
+          pointer-events-none z-10
+        `}>Due Day</label>
         <select
+          id="dueDay"
           name="day"
           value={selectedDay}
-          className={`border p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200
-            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}`}
+          className={`
+            peer border-2 p-3 rounded-xl w-full focus:outline-none focus:ring-3 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300
+            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}
+            shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
+          `}
           required
           readOnly
         >
@@ -503,24 +566,29 @@ const TaskFormModal = ({ isOpen, onClose, title, editingTask, handleAddTask, han
           <option value="Sunday">Sunday</option>
         </select>
       </div>
-      <div className="flex justify-end gap-2">
+
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-4 pt-4">
         <Button
           type="button"
           variant="secondary"
           onClick={onClose}
+          className="hover:scale-105"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           variant="primary"
+          className="hover:scale-105"
         >
-          {editingTask ? "Save" : "Add"}
+          {editingTask ? "Save Changes" : "Add Task"}
         </Button>
       </div>
     </form>
   </Modal>
 );
+
 
 // --- DeleteConfirmationModal Component ---
 const DeleteConfirmationModal = ({ isOpen, onClose, handleDeleteTask, isDarkMode }) => (
