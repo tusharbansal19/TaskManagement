@@ -12,6 +12,7 @@ import Navbar from './Components/Navbar'; // VERIFY PATH: Ensure this is correct
 import TSidebar from './Components/Sidebar'; // VERIFY PATH: Ensure this is correct (e.g., './Components/Sidebar')
 import { ThemeProvider, useTheme } from './ThemeContext'; // VERIFY PATH: Ensure this is correct (e.g., './ThemeContext' or './Context/ThemeContext')
 import ProfileSection from './pages/ProfileSection';
+import FullScreenLoader from './Components/PageLoader';
 
 
 function MainLayout({ children }) {
@@ -40,6 +41,7 @@ function MainLayout({ children }) {
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={handleToggleSidebar} // Pass the function to close sidebar from Sidebar
         />
+        {/* <FullScreenLoader/> */}
 
         {/* Main content area, adjusts margin based on sidebar presence on medium screens and up */}
         <main className={`flex-1 p-2 md:p-6 overflow-x-auto transition-all duration-300
