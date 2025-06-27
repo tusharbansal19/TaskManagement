@@ -45,7 +45,7 @@ const Card = ({ title, children, className = '', headerContent = null, delay = 0
   return (
     <div 
       ref={cardRef}
-      className={`rounded-2xl shadow-lg border transition-all duration-700 hover:shadow-xl transform ${
+      className={`rounded-xl sm:rounded-2xl shadow-lg border transition-all duration-700 hover:shadow-xl transform ${
         isVisible 
           ? 'opacity-100 translate-y-0 scale-100' 
           : 'opacity-0 translate-y-8 scale-95'
@@ -55,17 +55,17 @@ const Card = ({ title, children, className = '', headerContent = null, delay = 0
           : 'bg-white/95 backdrop-blur-sm border-gray-200/50 text-gray-900 hover:bg-white/98'
       }`}
     >
-      <div className={`p-4 sm:p-6 border-b ${
+      <div className={`p-2 sm:p-3 md:p-4 border-b ${
         isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'
       }`}>
         <div className="flex items-center justify-between">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
+          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center">
             {title}
           </h3>
           {headerContent && <div>{headerContent}</div>}
         </div>
       </div>
-      <div className="p-4 sm:p-6">
+      <div className="p-2 sm:p-3 md:p-4">
         {children}
       </div>
     </div>
@@ -75,7 +75,7 @@ const Card = ({ title, children, className = '', headerContent = null, delay = 0
 const Button = ({ children, onClick, className = '', variant = 'primary', disabled = false, icon: Icon = null }) => {
   const { isDarkMode } = useTheme();
   
-  const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center transform hover:scale-105 active:scale-95";
+  const baseStyle = "px-3 py-1.5 rounded-lg font-medium transition-all duration-300 flex items-center justify-center transform hover:scale-105 active:scale-95 text-xs sm:text-sm";
   const variants = {
     primary: "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-md hover:shadow-lg hover:shadow-blue-500/25",
     secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600",
@@ -86,7 +86,7 @@ const Button = ({ children, onClick, className = '', variant = 'primary', disabl
   
   return (
     <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={disabled}>
-      {Icon && <Icon size={18} className={`${children ? "mr-2" : ""} transition-transform duration-200 group-hover:rotate-12`} />}
+      {Icon && <Icon size={14} className={`${children ? "mr-1.5" : ""} transition-transform duration-200 group-hover:rotate-12`} />}
       {children}
     </button>
   );
@@ -126,14 +126,14 @@ const TaskCompletionPieChart = ({ data }) => {
   const COLORS = ['#10B981', '#EF4444']; // Green for completed, Red for incomplete
 
   return (
-    <ResponsiveContainer width="100%" height={180}>
+    <ResponsiveContainer width="100%" height={150}>
       <PieChart>
         <Pie
           data={pieData}
           cx="50%"
           cy="50%"
-          innerRadius={40}
-          outerRadius={70}
+          innerRadius={35}
+          outerRadius={60}
           fill="#8884d8"
           paddingAngle={2}
           dataKey="value"
@@ -157,18 +157,18 @@ const TaskCompletionPieChart = ({ data }) => {
             backgroundColor: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(12px)',
             color: '#333',
-            fontSize: '12px',
-            padding: '12px 16px'
+            fontSize: '11px',
+            padding: '10px 14px'
           }}
           itemStyle={{ fontWeight: 'bold' }}
         />
         <Legend
           verticalAlign="bottom"
-          height={30}
+          height={25}
           iconType="circle"
-          iconSize={8}
+          iconSize={6}
           formatter={(value, entry) => (
-            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium">{value}</span>
+            <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">{value}</span>
           )}
         />
       </PieChart>
@@ -520,12 +520,12 @@ const TaskDistributionQuadrant = ({ tasks }) => {
     <Card title="Task Distribution" className="h-full" delay={0}>
       <div 
         ref={quadrantRef}
-        className="grid grid-cols-2 gap-3 sm:gap-4 h-full min-h-[200px] sm:min-h-[220px]"
+        className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 h-full min-h-[160px] sm:min-h-[180px] md:min-h-[200px]"
       >
         {quadrants.map((quadrant, index) => (
           <div
             key={quadrant.title}
-            className={`flex flex-col items-center justify-center rounded-xl sm:rounded-2xl p-3 sm:p-4 transition-all duration-700 transform hover:scale-105 group cursor-pointer ${
+            className={`flex flex-col items-center justify-center rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 transition-all duration-700 transform hover:scale-105 group cursor-pointer relative ${
               isVisible 
                 ? 'opacity-100 translate-y-0 scale-100' 
                 : 'opacity-0 translate-y-8 scale-95'
@@ -537,14 +537,14 @@ const TaskDistributionQuadrant = ({ tasks }) => {
               transitionDelay: `${quadrant.delay * 100}ms`
             }}
           >
-            <div className={`p-2 sm:p-3 rounded-lg ${quadrant.color} bg-opacity-20 mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300`}>
+            <div className={`p-1.5 sm:p-2 md:p-3 rounded-lg ${quadrant.color} bg-opacity-20 mb-1.5 sm:mb-2 md:mb-3 group-hover:scale-110 transition-transform duration-300`}>
               <quadrant.icon 
-                size={20} 
-                className={`${quadrant.textColor} ${quadrant.darkTextColor} group-hover:rotate-12 transition-transform duration-300`} 
+                size={16} 
+                className={`sm:w-5 sm:h-5 ${quadrant.textColor} ${quadrant.darkTextColor} group-hover:rotate-12 transition-transform duration-300`} 
               />
             </div>
             <div className="text-center">
-              <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+              <p className="text-sm sm:text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100 mb-0.5 sm:mb-1">
                 {quadrant.count}
               </p>
               <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium leading-tight">
@@ -553,7 +553,7 @@ const TaskDistributionQuadrant = ({ tasks }) => {
             </div>
             
             {/* Animated progress ring */}
-            <div className="absolute inset-0 rounded-xl sm:rounded-2xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute inset-0 rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className={`w-full h-full ${quadrant.color} bg-opacity-5 animate-pulse`}></div>
             </div>
           </div>
@@ -561,7 +561,7 @@ const TaskDistributionQuadrant = ({ tasks }) => {
       </div>
       
       {/* Summary text */}
-      <div className="mt-4 text-center">
+      <div className="mt-3 sm:mt-4 text-center">
         <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           Total: <span className="font-semibold text-gray-700 dark:text-gray-300">{tasks.length}</span> tasks
         </p>
@@ -699,6 +699,16 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(0);
 
+  // User profile state
+  const [userProfile, setUserProfile] = useState({
+    name: '',
+    email: '',
+    username: '',
+    role: 'User',
+    avatar: 'https://placehold.co/100x100/A78BFA/ffffff?text=U',
+    bio: ''
+  });
+
   // Gemini API states
   const [showProjectSuggestionsModal, setShowProjectSuggestionsModal] = useState(false);
   const [currentProjectSuggestions, setCurrentProjectSuggestions] = useState('');
@@ -711,6 +721,57 @@ const Dashboard = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Load user profile data
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const email = localStorage.getItem('email');
+        
+        if (!token) {
+          console.log("No token found");
+          return;
+        }
+
+        // Set basic data from localStorage
+        setUserProfile(prev => ({
+          ...prev,
+          email: email || '',
+          name: email ? email.split('@')[0] : 'User',
+          username: email ? email.split('@')[0] : 'user',
+        }));
+
+        // Try to fetch user profile from API
+        try {
+          const response = await axios.post(
+            'http://localhost:5000/api/users/profile',
+            { token },
+            { headers: { 'Content-Type': 'application/json' } }
+          );
+
+          if (response.data && response.data.user) {
+            const userData = response.data.user;
+            setUserProfile(prev => ({
+              ...prev,
+              name: userData.username || userData.name || email.split('@')[0],
+              email: userData.email || email,
+              bio: userData.bio || 'No bio available',
+              role: userData.role || 'User',
+              avatar: userData.image || userData.avatar || `https://placehold.co/100x100/A78BFA/ffffff?text=${(userData.username || email.split('@')[0]).charAt(0).toUpperCase()}`,
+              username: userData.username || email.split('@')[0],
+            }));
+          }
+        } catch (error) {
+          console.log('Could not fetch profile data, using localStorage data');
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    loadUserData();
   }, []);
 
   // Fetch tasks from API on component mount
@@ -801,76 +862,88 @@ const Dashboard = () => {
       {/* Main content area */}
       <div className="flex-1 flex flex-col overflow-x-hidden transition-all duration-500 relative z-10">
         {/* Enhanced Page Content */}
-        <main className="flex-1 p-3 sm:p-6 md:p-8 lg:p-10 overflow-y-auto">
-          {/* Enhanced Header Section */}
-          <div className="mb-6 sm:mb-8 transform transition-all duration-700" style={{ 
+        <main className="flex-1 p-2 sm:p-4 md:p-6 lg:p-8 xl:p-10 overflow-y-auto">
+          {/* Enhanced Header Section with Real User Data */}
+          <div className="mb-3 sm:mb-4 md:mb-6 transform transition-all duration-700" style={{ 
             transform: `translateY(${Math.min(scrollY * 0.3, 50)}px)`,
             opacity: Math.max(1 - scrollY * 0.002, 0.8)
           }}>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="space-y-2">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-fade-in-up">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+              <div className="space-y-1.5">
+                <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-fade-in-up">
                   Overview
                 </h2>
-                <p className="text-sm sm:text-base md:text-lg text-gray-500 dark:text-gray-400 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                  Welcome back, <span className="font-semibold text-blue-600 dark:text-blue-400">{localStorage.getItem("username") || "John Doe"}</span>! Here's your task summary.
-                </p>
+                <div className="flex items-center space-x-2.5">
+                  <img
+                    src={userProfile.avatar}
+                    alt="User Avatar"
+                    className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-blue-500 dark:border-blue-400 shadow-lg"
+                  />
+                  <div>
+                    <p className="text-xs sm:text-sm md:text-base text-gray-500 dark:text-gray-400 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                      Welcome back, <span className="font-semibold text-blue-600 dark:text-blue-400">{userProfile.name || userProfile.username || "User"}</span>!
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      {userProfile.role} • {userProfile.email}
+                    </p>
+                  </div>
+                </div>
               </div>
               
-              {/* Quick Stats Cards for Mobile */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                <div className={`p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:scale-105 transform ${
+              {/* Quick Stats Cards - Responsive Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-1.5 sm:gap-2 md:gap-3">
+                <div className={`p-1.5 sm:p-2 md:p-3 rounded-xl border transition-all duration-300 hover:scale-105 transform ${
                   isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                 }`}>
-                  <div className="flex items-center space-x-2">
-                    <div className="p-2 bg-green-500/20 rounded-lg">
-                      <CheckSquare size={16} className="text-green-500" />
+                  <div className="flex items-center space-x-1.5">
+                    <div className="p-1 bg-green-500/20 rounded-lg">
+                      <CheckSquare size={12} className="sm:w-3 sm:h-3 text-green-500" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 dark:text-gray-400">Completed</p>
-                      <p className="text-lg font-bold text-green-600 dark:text-green-400">{completedTasks}</p>
+                      <p className="text-sm sm:text-base font-bold text-green-600 dark:text-green-400">{completedTasks}</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className={`p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:scale-105 transform ${
+                <div className={`p-1.5 sm:p-2 md:p-3 rounded-xl border transition-all duration-300 hover:scale-105 transform ${
                   isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                 }`}>
-                  <div className="flex items-center space-x-2">
-                    <div className="p-2 bg-red-500/20 rounded-lg">
-                      <Clock size={16} className="text-red-500" />
+                  <div className="flex items-center space-x-1.5">
+                    <div className="p-1 bg-red-500/20 rounded-lg">
+                      <Clock size={12} className="sm:w-3 sm:h-3 text-red-500" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 dark:text-gray-400">Pending</p>
-                      <p className="text-lg font-bold text-red-600 dark:text-red-400">{incompleteTasks}</p>
+                      <p className="text-sm sm:text-base font-bold text-red-600 dark:text-red-400">{incompleteTasks}</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className={`p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:scale-105 transform ${
+                <div className={`p-1.5 sm:p-2 md:p-3 rounded-xl border transition-all duration-300 hover:scale-105 transform ${
                   isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                 }`}>
-                  <div className="flex items-center space-x-2">
-                    <div className="p-2 bg-blue-500/20 rounded-lg">
-                      <Target size={16} className="text-blue-500" />
+                  <div className="flex items-center space-x-1.5">
+                    <div className="p-1 bg-blue-500/20 rounded-lg">
+                      <Target size={12} className="sm:w-3 sm:h-3 text-blue-500" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
-                      <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{tasks.length}</p>
+                      <p className="text-sm sm:text-base font-bold text-blue-600 dark:text-blue-400">{tasks.length}</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className={`p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:scale-105 transform ${
+                <div className={`p-1.5 sm:p-2 md:p-3 rounded-xl border transition-all duration-300 hover:scale-105 transform ${
                   isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                 }`}>
-                  <div className="flex items-center space-x-2">
-                    <div className="p-2 bg-purple-500/20 rounded-lg">
-                      <Award size={16} className="text-purple-500" />
+                  <div className="flex items-center space-x-1.5">
+                    <div className="p-1 bg-purple-500/20 rounded-lg">
+                      <Award size={12} className="sm:w-3 sm:h-3 text-purple-500" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 dark:text-gray-400">Progress</p>
-                      <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                      <p className="text-sm sm:text-base font-bold text-purple-600 dark:text-purple-400">
                         {tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0}%
                       </p>
                     </div>
@@ -881,27 +954,27 @@ const Dashboard = () => {
           </div>
 
           {loading ? (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-4 sm:space-y-6 animate-fade-in">
               {/* Enhanced Header Skeleton */}
-              <div className="mb-6 sm:mb-8">
-                <div className="h-8 sm:h-10 md:h-12 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-2 w-48 skeleton-shimmer"></div>
-                <div className="h-4 sm:h-5 md:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse w-80 skeleton-shimmer"></div>
+              <div className="mb-4 sm:mb-6 md:mb-8">
+                <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-2 w-32 sm:w-48 skeleton-shimmer"></div>
+                <div className="h-3 sm:h-4 md:h-5 lg:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse w-60 sm:w-80 skeleton-shimmer"></div>
               </div>
 
-              {/* Enhanced Dashboard Grid Skeleton */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+              {/* Enhanced Dashboard Grid Skeleton - Responsive */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
                 {/* Task Distribution Quadrant Skeleton */}
-                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
-                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full backdrop-blur-sm ${
+                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
+                  <div className={`rounded-2xl shadow-lg border p-3 sm:p-4 md:p-6 h-full backdrop-blur-sm ${
                     isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                   }`}>
-                    <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-4 w-32 skeleton-shimmer"></div>
-                    <div className="grid grid-cols-2 grid-rows-2 gap-2 sm:gap-3 h-full min-h-[180px] sm:min-h-[200px]">
+                    <div className="h-5 sm:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-3 sm:mb-4 w-28 sm:w-32 skeleton-shimmer"></div>
+                    <div className="grid grid-cols-2 grid-rows-2 gap-2 sm:gap-3 h-full min-h-[160px] sm:min-h-[180px] md:min-h-[200px]">
                       {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="flex flex-col items-center justify-center rounded-xl p-2 sm:p-4 animate-pulse">
-                          <div className="w-6 h-6 sm:w-9 sm:h-9 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded-full mb-1 sm:mb-2 skeleton-shimmer"></div>
-                          <div className="h-4 sm:h-5 md:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded w-8 sm:w-10 mb-1 skeleton-shimmer"></div>
-                          <div className="h-3 sm:h-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded w-16 sm:w-20 skeleton-shimmer"></div>
+                        <div key={i} className="flex flex-col items-center justify-center rounded-xl p-2 sm:p-3 md:p-4 animate-pulse">
+                          <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-9 md:h-9 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded-full mb-1 sm:mb-2 skeleton-shimmer"></div>
+                          <div className="h-3 sm:h-4 md:h-5 lg:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded w-6 sm:w-8 md:w-10 mb-1 skeleton-shimmer"></div>
+                          <div className="h-2 sm:h-3 md:h-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded w-12 sm:w-16 md:w-20 skeleton-shimmer"></div>
                         </div>
                       ))}
                     </div>
@@ -909,73 +982,73 @@ const Dashboard = () => {
                 </div>
 
                 {/* Daily Task Bar Chart Skeleton */}
-                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
-                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full backdrop-blur-sm ${
+                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
+                  <div className={`rounded-2xl shadow-lg border p-3 sm:p-4 md:p-6 h-full backdrop-blur-sm ${
                     isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                   }`}>
-                    <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-4 w-40 skeleton-shimmer"></div>
-                    <div className="h-48 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
+                    <div className="h-5 sm:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-3 sm:mb-4 w-36 sm:w-40 skeleton-shimmer"></div>
+                    <div className="h-40 sm:h-48 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
                   </div>
                 </div>
 
                 {/* Task Completion Pie Chart Skeleton */}
-                <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1">
-                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full backdrop-blur-sm ${
+                <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
+                  <div className={`rounded-2xl shadow-lg border p-3 sm:p-4 md:p-6 h-full backdrop-blur-sm ${
                     isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                   }`}>
-                    <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-4 w-36 skeleton-shimmer"></div>
-                    <div className="h-40 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
+                    <div className="h-5 sm:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-3 sm:mb-4 w-32 sm:w-36 skeleton-shimmer"></div>
+                    <div className="h-32 sm:h-40 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
                   </div>
                 </div>
 
                 {/* Daily Task Load Range Skeleton */}
-                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
-                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full backdrop-blur-sm ${
+                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
+                  <div className={`rounded-2xl shadow-lg border p-3 sm:p-4 md:p-6 h-full backdrop-blur-sm ${
                     isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                   }`}>
-                    <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-4 w-28 skeleton-shimmer"></div>
-                    <div className="h-32 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
+                    <div className="h-5 sm:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-3 sm:mb-4 w-24 sm:w-28 skeleton-shimmer"></div>
+                    <div className="h-24 sm:h-32 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
                   </div>
                 </div>
 
                 {/* Task Trend Area Chart Skeleton */}
-                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
-                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full backdrop-blur-sm ${
+                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
+                  <div className={`rounded-2xl shadow-lg border p-3 sm:p-4 md:p-6 h-full backdrop-blur-sm ${
                     isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                   }`}>
-                    <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-4 w-36 skeleton-shimmer"></div>
-                    <div className="h-48 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
+                    <div className="h-5 sm:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-3 sm:mb-4 w-32 sm:w-36 skeleton-shimmer"></div>
+                    <div className="h-40 sm:h-48 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
                   </div>
                 </div>
 
                 {/* Task Calendar Skeleton */}
-                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
-                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full backdrop-blur-sm ${
+                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
+                  <div className={`rounded-2xl shadow-lg border p-3 sm:p-4 md:p-6 h-full backdrop-blur-sm ${
                     isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                   }`}>
-                    <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-4 w-24 skeleton-shimmer"></div>
-                    <div className="h-48 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
+                    <div className="h-5 sm:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-3 sm:mb-4 w-20 sm:w-24 skeleton-shimmer"></div>
+                    <div className="h-40 sm:h-48 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse skeleton-shimmer"></div>
                   </div>
                 </div>
 
                 {/* Projects Section Skeleton */}
-                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3">
-                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full backdrop-blur-sm ${
+                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3 2xl:col-span-3">
+                  <div className={`rounded-2xl shadow-lg border p-3 sm:p-4 md:p-6 h-full backdrop-blur-sm ${
                     isDarkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white/50 border-gray-200/50'
                   }`}>
-                    <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-4 w-20 skeleton-shimmer"></div>
-                    <div className="space-y-3">
+                    <div className="h-5 sm:h-6 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-xl animate-pulse mb-3 sm:mb-4 w-16 sm:w-20 skeleton-shimmer"></div>
+                    <div className="space-y-2 sm:space-y-3">
                       {/* Table Header Skeleton */}
-                      <div className="grid grid-cols-5 gap-4 py-3">
+                      <div className="grid grid-cols-5 gap-2 sm:gap-4 py-2 sm:py-3">
                         {[1, 2, 3, 4, 5].map((i) => (
-                          <div key={i} className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded animate-pulse skeleton-shimmer"></div>
+                          <div key={i} className="h-3 sm:h-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded animate-pulse skeleton-shimmer"></div>
                         ))}
                       </div>
                       {/* Table Rows Skeleton */}
                       {[1, 2, 3, 4, 5].map((row) => (
-                        <div key={row} className="grid grid-cols-5 gap-4 py-3">
+                        <div key={row} className="grid grid-cols-5 gap-2 sm:gap-4 py-2 sm:py-3">
                           {[1, 2, 3, 4, 5].map((col) => (
-                            <div key={col} className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded animate-pulse skeleton-shimmer"></div>
+                            <div key={col} className="h-3 sm:h-4 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-500 rounded animate-pulse skeleton-shimmer"></div>
                           ))}
                         </div>
                       ))}
@@ -985,119 +1058,170 @@ const Dashboard = () => {
               </div>
 
               {/* Enhanced Loading Text */}
-              <div className="text-center py-8">
-                <div className="inline-flex items-center space-x-3 text-gray-500 dark:text-gray-400">
-                  <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm font-medium">Loading your dashboard...</span>
+              <div className="text-center py-6 sm:py-8">
+                <div className="inline-flex items-center space-x-2 sm:space-x-3 text-gray-500 dark:text-gray-400">
+                  <div className="w-4 h-4 sm:w-6 sm:h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-xs sm:text-sm font-medium">Loading your dashboard...</span>
                 </div>
               </div>
             </div>
           ) : (
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 animate-fade-in">
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-8 animate-fade-in">
 
               {/* Task Distribution Quadrant */}
-              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
+              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
                 <TaskDistributionQuadrant tasks={tasks} />
               </div>
 
               {/* Daily Task Bar Chart */}
-              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
+              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
                 <Card title="Daily Task Performance" className="h-full" delay={1}>
                   <DailyTaskBarChart data={tasks} />
                 </Card>
               </div>
 
               {/* Task Completion Pie Chart */}
-              <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1">
+              <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
                 <Card title="Task Completion Rate" className="h-full" delay={2}>
                   <TaskCompletionPieChart data={pieData} />
                 </Card>
               </div>
 
               {/* Daily Task Load Range */}
-              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
+              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
                 <DailyTaskLoadRange tasks={tasks} />
               </div>
 
               {/* Task Trend Area Chart */}
-              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
+              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
                 <Card title="Task Due Date Trend" className="h-full" delay={3}>
                   <TaskTrendAreaChart data={tasks} isDarkMode={isDarkMode} />
                 </Card>
               </div>
 
               {/* Task Calendar */}
-              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
+              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
                 <TaskCalendar tasks={tasks} />
               </div>
 
-              {/* Projects Section */}
-              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3">
-                <Card title="Projects" className="h-full" delay={4}>
+              {/* Projects Section - Now Shows Real User Tasks */}
+              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3 2xl:col-span-3">
+                <Card title="My Tasks" className="h-full" delay={4}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                       <thead className="bg-gray-50 dark:bg-gray-700 rounded-t-2xl">
                         <tr>
-                          <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-xl dark:text-gray-400">
-                            Project Name
+                          <th scope="col" className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-xl dark:text-gray-400">
+                            Task Name
                           </th>
-                          <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                          <th scope="col" className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                             Status
                           </th>
-                          <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                            Progress
+                          <th scope="col" className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                            Priority
                           </th>
-                          <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
+                          <th scope="col" className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                             Due Date
                           </th>
-                          <th scope="col" className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-xl dark:text-gray-400">
+                          <th scope="col" className="px-2 sm:px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tr-xl dark:text-gray-400">
                             Actions
                           </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                        {mockProjects.map((project, index) => (
-                          <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group transform hover:scale-[1.02]" style={{ animationDelay: `${index * 100}ms` }}>
-                            <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                              {project.name}
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                              <span className={`px-2 sm:px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full capitalize transition-all duration-300 ${
-                                project.status === 'Completed' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-800 dark:text-emerald-100' :
-                                project.status === 'In Progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' :
-                                'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
-                              }`}>
-                                {project.status}
-                              </span>
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                              <div className="w-20 sm:w-28 bg-gray-200 rounded-full h-2 sm:h-3 dark:bg-gray-700">
-                                <div className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 sm:h-3 rounded-full transition-all duration-700 ease-out" style={{ width: `${project.progress}%` }}></div>
+                        {tasks.length > 0 ? (
+                          tasks.slice(0, 10).map((task, index) => (
+                            <tr key={task._id || task.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 group transform hover:scale-[1.02]" style={{ animationDelay: `${index * 100}ms` }}>
+                              <td className="px-2 sm:px-3 py-2.5 whitespace-nowrap text-xs font-medium text-gray-900 dark:text-gray-100">
+                                <div className="flex items-center">
+                                  <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                                    task.priority === 'high' ? 'bg-red-500' :
+                                    task.priority === 'medium' ? 'bg-yellow-500' :
+                                    'bg-green-500'
+                                  }`}></div>
+                                  {task.title || task.taskName || 'Untitled Task'}
+                                </div>
+                              </td>
+                              <td className="px-2 sm:px-3 py-2.5 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
+                                <span className={`px-1.5 py-0.5 inline-flex text-xs leading-4 font-semibold rounded-full capitalize transition-all duration-300 ${
+                                  task.status === 'completed' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-800 dark:text-emerald-100' :
+                                  task.status === 'in progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100' :
+                                  task.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                                  'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100'
+                                }`}>
+                                  {task.status || 'pending'}
+                                </span>
+                              </td>
+                              <td className="px-2 sm:px-3 py-2.5 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
+                                <span className={`px-1.5 py-0.5 inline-flex text-xs leading-4 font-semibold rounded-full capitalize transition-all duration-300 ${
+                                  task.priority === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100' :
+                                  task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100' :
+                                  'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
+                                }`}>
+                                  {task.priority || 'low'}
+                                </span>
+                              </td>
+                              <td className="px-2 sm:px-3 py-2.5 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
+                                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}
+                              </td>
+                              <td className="px-2 sm:px-3 py-2.5 whitespace-nowrap text-right text-xs font-medium opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                <Button
+                                  variant="ghost"
+                                  className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-1 group"
+                                  onClick={() => generateProjectSuggestions({
+                                    name: task.title || task.taskName || 'Untitled Task',
+                                    status: task.status || 'pending',
+                                    progress: task.status === 'completed' ? 100 : task.status === 'in progress' ? 50 : 0
+                                  })}
+                                  disabled={isGeneratingProjectSuggestions}
+                                  icon={Sparkles}
+                                >
+                                  {isGeneratingProjectSuggestions ? 'Generating...' : 'Suggest'}
+                                </Button>
+                                <Button variant="ghost" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
+                                  Edit
+                                </Button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5" className="px-2 sm:px-3 py-6 text-center text-gray-500 dark:text-gray-400">
+                              <div className="flex flex-col items-center space-y-1.5">
+                                <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                                  <List size={16} className="text-gray-400" />
+                                </div>
+                                <p className="text-xs font-medium">No tasks found</p>
+                                <p className="text-xs">Create your first task to get started!</p>
                               </div>
-                              <span className="ml-2 text-xs font-medium">{project.progress}%</span>
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                              {project.dueDate}
-                            </td>
-                            <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300">
-                              <Button
-                                variant="ghost"
-                                className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-2 group"
-                                onClick={() => generateProjectSuggestions(project)}
-                                disabled={isGeneratingProjectSuggestions}
-                                icon={Sparkles}
-                              >
-                                {isGeneratingProjectSuggestions ? 'Generating...' : 'Suggest'}
-                              </Button>
-                              <Button variant="ghost" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
-                                Edit
-                              </Button>
                             </td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>
+                  
+                  {/* Task Summary */}
+                  {tasks.length > 0 && (
+                    <div className="mt-3 p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                      <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Total Tasks: <span className="font-semibold text-gray-900 dark:text-gray-100">{tasks.length}</span>
+                          </span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Completed: <span className="font-semibold text-green-600 dark:text-green-400">{completedTasks}</span>
+                          </span>
+                          <span className="text-gray-600 dark:text-gray-400">
+                            Pending: <span className="font-semibold text-red-600 dark:text-red-400">{incompleteTasks}</span>
+                          </span>
+                        </div>
+                        <div className="text-gray-500 dark:text-gray-400">
+                          Showing {Math.min(tasks.length, 10)} of {tasks.length} tasks
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </Card>
               </div>
               

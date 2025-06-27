@@ -364,3 +364,182 @@ html {
 .dark .card-hover:hover {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .container-responsive {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .text-responsive {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  .card-responsive {
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .container-responsive {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .text-responsive {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+  
+  .card-responsive {
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container-responsive {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  .text-responsive {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+  
+  .card-responsive {
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .container-responsive {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+  
+  .text-responsive {
+    font-size: 1.25rem;
+    line-height: 1.875rem;
+  }
+  
+  .card-responsive {
+    padding: 2rem;
+    border-radius: 1.5rem;
+  }
+}
+
+@media (min-width: 1281px) {
+  .container-responsive {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+  
+  .text-responsive {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  
+  .card-responsive {
+    padding: 2.5rem;
+    border-radius: 2rem;
+  }
+}
+
+/* Enhanced responsive grid */
+.grid-responsive {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive {
+    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive {
+    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-responsive {
+    gap: 2.5rem;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1536px) {
+  .grid-responsive {
+    gap: 3rem;
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Responsive spacing */
+.space-responsive {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .space-responsive {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .space-responsive {
+    margin-bottom: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .space-responsive {
+    margin-bottom: 2.5rem;
+  }
+}
+
+/* Responsive typography */
+.heading-responsive {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 2rem;
+}
+
+@media (min-width: 640px) {
+  .heading-responsive {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .heading-responsive {
+    font-size: 2.5rem;
+    line-height: 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .heading-responsive {
+    font-size: 3rem;
+    line-height: 3.5rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .heading-responsive {
+    font-size: 3.5rem;
+    line-height: 4rem;
+  }
+}
