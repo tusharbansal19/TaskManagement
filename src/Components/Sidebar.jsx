@@ -1,13 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Home, LayoutGrid, Folder, CheckSquare, Settings, Users, LogOut, UserCircle, X, Sun, Moon } from 'lucide-react';
 import { useAuth } from "../Auth/AuthProtectComponents";
 import { useTheme } from '../ThemeContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useTheme();
+  
+  const [userData, setUserData] = useState({
+    name: 'User',
+    email: '',
+    role: 'User',
+    avatar: 'https://placehold.co/100x100/A78BFA/ffffff?text=U'
+  });
+
+  // Load user data from localStorage
+  useEffect(() => {
+    const loadUserData = () => {
+      const email = localStorage.getItem('email');
+      const token = localStorage.getItem('token');
+      
+      if (email && token) {
+        const name = email.split('@')[0];
+        setUserData({
+          name: name.charAt(0).toUpperCase() + name.slice(1),
+          email: email,
+          role: 'Admin', // You can make this dynamic based on user role from API
+          avatar: `https://placehold.co/100x100/A78BFA/ffffff?text=${name.charAt(0).toUpperCase()}`
+        });
+      }
+    };
+
+    loadUserData();
+  }, []);
 
   const menuItems = [
     { text: "Overview", icon: Home, path: "/" },
@@ -23,6 +52,11 @@ const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
     localStorage.clear();
     navigate("/login");
     toggleSidebar();
+    toast.success('Logged out successfully!', {
+      position: "top-right",
+      autoClose: 3000,
+      theme: isDarkMode ? "dark" : "light",
+    });
   };
 
   return (
@@ -106,12 +140,16 @@ const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
           </ul>
         </nav>
         {/* User profile */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-800 flex items-center justify-center">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-800">
           <div className="flex items-center">
-            <UserCircle size={36} className="mr-3 text-blue-500 dark:text-blue-400" />
-            <div>
-              <p className="font-medium text-gray-900 dark:text-white">Jane Doe</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Admin</p>
+            <img 
+              src={userData.avatar} 
+              alt="User Avatar" 
+              className="w-10 h-10 rounded-full mr-3 border-2 border-blue-500 dark:border-blue-400"
+            />
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-gray-900 dark:text-white truncate">{userData.name}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{userData.role}</p>
             </div>
           </div>
         </div>

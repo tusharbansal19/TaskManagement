@@ -9,7 +9,7 @@ import {
   CalendarDays, Clock, List, TrendingUp, TrendingDown,
 } from 'lucide-react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectTasks } from '../redux/selectFilteredTasks';
@@ -653,6 +653,7 @@ const Dashboard = () => {
 
   return (
     <div className={`flex min-h-screen w-full ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'} font-sans antialiased relative`}>
+      <ToastContainer />
       {/* Main content area - now acts as the primary container */}
       <div className="flex-1 flex flex-col overflow-x-hidden transition-all duration-500">
         {/* Top Bar for Dashboard Title and User Controls */}
@@ -670,8 +671,116 @@ const Dashboard = () => {
           </div>
 
           {loading ? (
-            <div className="w-full flex justify-center items-center h-64 sm:h-96">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 border-4 sm:border-8 border-dashed border-blue-600 border-t-transparent rounded-full animate-spin-slow"></div>
+            <div className="space-y-6">
+              {/* Header Skeleton */}
+              <div className="mb-6 sm:mb-8">
+                <div className="h-8 sm:h-10 md:h-12 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-2 w-48 skeleton-shimmer"></div>
+                <div className="h-4 sm:h-5 md:h-6 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse w-80 skeleton-shimmer"></div>
+              </div>
+
+              {/* Dashboard Grid Skeleton */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                {/* Task Distribution Quadrant Skeleton */}
+                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
+                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full ${
+                    isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                  }`}>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-4 w-32 skeleton-shimmer"></div>
+                    <div className="grid grid-cols-2 grid-rows-2 gap-2 sm:gap-3 h-full min-h-[180px] sm:min-h-[200px]">
+                      {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="flex flex-col items-center justify-center rounded-lg sm:rounded-xl p-2 sm:p-4 animate-pulse">
+                          <div className="w-6 h-6 sm:w-9 sm:h-9 bg-gray-200 dark:bg-gray-600 rounded-full mb-1 sm:mb-2 skeleton-shimmer"></div>
+                          <div className="h-4 sm:h-5 md:h-6 bg-gray-200 dark:bg-gray-600 rounded w-8 sm:w-10 mb-1 skeleton-shimmer"></div>
+                          <div className="h-3 sm:h-4 bg-gray-200 dark:bg-gray-600 rounded w-16 sm:w-20 skeleton-shimmer"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Daily Task Bar Chart Skeleton */}
+                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
+                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full ${
+                    isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                  }`}>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-4 w-40"></div>
+                    <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  </div>
+                </div>
+
+                {/* Task Completion Pie Chart Skeleton */}
+                <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1">
+                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full ${
+                    isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                  }`}>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-4 w-36"></div>
+                    <div className="h-40 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  </div>
+                </div>
+
+                {/* Daily Task Load Range Skeleton */}
+                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
+                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full ${
+                    isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                  }`}>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-4 w-28"></div>
+                    <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  </div>
+                </div>
+
+                {/* Task Trend Area Chart Skeleton */}
+                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
+                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full ${
+                    isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                  }`}>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-4 w-36"></div>
+                    <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  </div>
+                </div>
+
+                {/* Task Calendar Skeleton */}
+                <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1">
+                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full ${
+                    isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                  }`}>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-4 w-24"></div>
+                    <div className="h-48 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+                  </div>
+                </div>
+
+                {/* Projects Section Skeleton */}
+                <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3">
+                  <div className={`rounded-2xl shadow-lg border p-4 sm:p-6 h-full ${
+                    isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                  }`}>
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse mb-4 w-20"></div>
+                    <div className="space-y-3">
+                      {/* Table Header Skeleton */}
+                      <div className="grid grid-cols-5 gap-4 py-3">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <div key={i} className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
+                        ))}
+                      </div>
+                      {/* Table Rows Skeleton */}
+                      {[1, 2, 3, 4, 5].map((row) => (
+                        <div key={row} className="grid grid-cols-5 gap-4 py-3">
+                          {[1, 2, 3, 4, 5].map((col) => (
+                            <div key={col} className="h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Loading Text */}
+              <div className="text-center py-8">
+                <div className="inline-flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm font-medium">Loading your dashboard...</span>
+                </div>
+              </div>
             </div>
           ) : (
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">

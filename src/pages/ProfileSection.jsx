@@ -1,47 +1,50 @@
-import React, { useState } from 'react';
-import { User, Mail, Briefcase, Edit, Save, X, Camera, Sun, Moon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Mail, Briefcase, Edit, Save, X, Camera, Sun, Moon, LogOut } from 'lucide-react';
+import { useTheme } from '../ThemeContext';
+import { useAuth } from '../Auth/AuthProtectComponents';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Reusable Button component (copied for self-containment)
 const Button = ({ children, onClick, className = '', variant = 'primary', disabled = false, icon: Icon = null }) => {
-  const baseStyle = "px-4 py-2 rounded-full font-semibold transition-all duration-300 transform-gpu active:scale-95 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2";
+  const { isDarkMode } = useTheme();
+  
+  const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center";
   const variants = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg focus:ring-blue-500",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 focus:ring-gray-400",
-    outline: "border-2 border-gray-300 text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 focus:ring-gray-500",
-    ghost: "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 focus:ring-transparent",
+    primary: "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-md hover:shadow-lg",
+    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600",
+    outline: "border border-gray-300 text-gray-800 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700",
+    ghost: "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
     link: "text-blue-600 hover:underline dark:text-blue-400",
   };
-  const disabledStyle = "opacity-50 cursor-not-allowed";
-
+  
   return (
-    <button
-      onClick={onClick}
-      className={`${baseStyle} ${variants[variant]} ${className} ${disabled ? disabledStyle : 'hover:scale-105'}`}
-      disabled={disabled}
-    >
-      {Icon && <Icon size={20} className={children ? "mr-2" : ""} />}
+    <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={disabled}>
+      {Icon && <Icon size={18} className={children ? "mr-2" : ""} />}
       {children}
     </button>
   );
 };
 
 // Reusable Modal component (copied for self-containment)
-const Modal = ({ isOpen, onClose, title, children, isDarkMode }) => {
+const Modal = ({ isOpen, onClose, title, children }) => {
+  const { isDarkMode } = useTheme();
+  
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className={`
-        bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95 animate-scale-in
-        ${isDarkMode ? 'dark:bg-gray-900 dark:text-gray-100 border border-gray-700' : 'bg-white text-gray-900 border border-gray-200'}
-      `}>
-        <div className="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4">
-          <h3 className="text-3xl font-extrabold text-blue-600 dark:text-blue-400">{title}</h3>
-          <Button variant="ghost" onClick={onClose} className="text-gray-500 hover:text-red-500">
-            <X size={28} />
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className={`rounded-xl shadow-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto transform scale-95 animate-scale-in
+        ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}`}>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
+          <Button variant="ghost" onClick={onClose} className="text-gray-600 dark:text-gray-300">
+            <X size={24} />
           </Button>
         </div>
-        <div className="text-gray-700 dark:text-gray-200 leading-relaxed">
+        <div className="text-gray-700 dark:text-gray-200">
           {children}
         </div>
       </div>
@@ -49,31 +52,132 @@ const Modal = ({ isOpen, onClose, title, children, isDarkMode }) => {
   );
 };
 
-
-const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
+const ProfileSection = () => {
+  const { isDarkMode, toggleDarkMode } = useTheme();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  
   const [profile, setProfile] = useState({
-    name: 'Jane Doe',
-    email: 'jane.doe@example.com',
-    bio: 'Passionate UI/UX Designer with a knack for creating intuitive and engaging user experiences. Always learning and exploring new design trends.',
-    role: 'UI/UX Designer',
-    avatar: 'https://placehold.co/100x100/A78BFA/ffffff?text=JD', // Placeholder image
+    name: '',
+    email: '',
+    bio: '',
+    role: 'User',
+    avatar: 'https://placehold.co/100x100/A78BFA/ffffff?text=U',
+    username: '',
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState({ ...profile });
   const [showEditModal, setShowEditModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Load user data from localStorage and API
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        const email = localStorage.getItem('email');
+        
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        // Set basic data from localStorage
+        setProfile(prev => ({
+          ...prev,
+          email: email || '',
+          name: email ? email.split('@')[0] : 'User',
+          username: email ? email.split('@')[0] : 'user',
+        }));
+
+        // Try to fetch user profile from API
+        try {
+          const response = await axios.post(
+            'http://localhost:5000/api/users/profile',
+            { token },
+            { headers: { 'Content-Type': 'application/json' } }
+          );
+
+          if (response.data && response.data.user) {
+            const userData = response.data.user;
+            setProfile(prev => ({
+              ...prev,
+              name: userData.username || userData.name || email.split('@')[0],
+              email: userData.email || email,
+              bio: userData.bio || 'No bio available',
+              role: userData.role || 'User',
+              avatar: userData.image || userData.avatar || `https://placehold.co/100x100/A78BFA/ffffff?text=${(userData.username || email.split('@')[0]).charAt(0).toUpperCase()}`,
+              username: userData.username || email.split('@')[0],
+            }));
+          }
+        } catch (error) {
+          console.log('Could not fetch profile data, using localStorage data');
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        toast.error('Failed to load user data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, [navigate]);
 
   const handleEditClick = () => {
-    setEditedProfile({ ...profile }); // Reset editedProfile to current profile
+    setEditedProfile({ ...profile });
     setShowEditModal(true);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    setProfile({ ...editedProfile });
-    setShowEditModal(false);
-    // In a real application, you would send editedProfile to a backend API here
-    console.log('Profile saved:', editedProfile);
+    setSaving(true);
+    
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        toast.error('Authentication required');
+        return;
+      }
+
+      // Update profile via API
+      const response = await axios.put(
+        'http://localhost:5000/api/users/profile',
+        {
+          token,
+          username: editedProfile.name,
+          email: editedProfile.email,
+          bio: editedProfile.bio,
+          role: editedProfile.role,
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      if (response.data && response.data.success) {
+        setProfile({ ...editedProfile });
+        setShowEditModal(false);
+        toast.success('Profile updated successfully!', {
+          position: "top-right",
+          autoClose: 3000,
+          theme: isDarkMode ? "dark" : "light",
+        });
+      } else {
+        throw new Error(response.data.message || 'Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error(error.response?.data?.message || 'Failed to update profile. Please try again!', {
+        position: "top-right",
+        autoClose: 3000,
+        theme: isDarkMode ? "dark" : "light",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -82,7 +186,6 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
   };
 
   const handleAvatarChange = (e) => {
-    // In a real application, handle image upload
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -93,10 +196,31 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    localStorage.clear();
+    navigate('/login');
+    toast.success('Logged out successfully!', {
+      position: "top-right",
+      autoClose: 3000,
+      theme: isDarkMode ? "dark" : "light",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className={`min-h-screen p-6 md:p-10 flex flex-col items-center justify-center
       ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}
       font-sans antialiased transition-colors duration-500`}>
+      
+      <ToastContainer />
 
       <div className={`
         relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl p-8 md:p-12
@@ -152,15 +276,14 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
               <User size={24} className="text-purple-500 dark:text-purple-400 mr-4" />
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Username</p>
-                <p className="text-lg font-medium text-gray-900 dark:text-gray-100">janedoe_design</p> {/* Mock data */}
+                <p className="text-lg font-medium text-gray-900 dark:text-gray-100">{profile.username}</p>
               </div>
             </div>
-            {/* Add more contact details if needed */}
           </div>
         </div>
 
-        {/* Edit Button */}
-        <div className="mt-10 text-center">
+        {/* Action Buttons */}
+        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <Button
             variant="primary"
             onClick={handleEditClick}
@@ -169,11 +292,19 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
           >
             Edit Profile
           </Button>
+          <Button
+            variant="secondary"
+            onClick={handleLogout}
+            icon={LogOut}
+            className="px-8 py-3 text-lg shadow-xl hover:shadow-2xl"
+          >
+            Logout
+          </Button>
         </div>
       </div>
 
       {/* Edit Profile Modal */}
-      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Profile" isDarkMode={isDarkMode}>
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Profile">
         <form onSubmit={handleSave} className="space-y-6">
           {/* Avatar Upload */}
           <div className="flex flex-col items-center mb-6">
@@ -199,7 +330,7 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
           {/* Name Input */}
           <div className="relative group">
             <label htmlFor="editName" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
-              ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
+              ${isDarkMode ? 'bg-gray-800 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
               pointer-events-none z-10
             `}>Full Name</label>
@@ -222,7 +353,7 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
           {/* Email Input */}
           <div className="relative group">
             <label htmlFor="editEmail" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
-              ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
+              ${isDarkMode ? 'bg-gray-800 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
               pointer-events-none z-10
             `}>Email Address</label>
@@ -245,7 +376,7 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
           {/* Role Input */}
           <div className="relative group">
             <label htmlFor="editRole" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
-              ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
+              ${isDarkMode ? 'bg-gray-800 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
               pointer-events-none z-10
             `}>Role</label>
@@ -268,7 +399,7 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
           {/* Bio Textarea */}
           <div className="relative group">
             <label htmlFor="editBio" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
-              ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
+              ${isDarkMode ? 'bg-gray-800 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
               peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
               pointer-events-none z-10
             `}>Biography</label>
@@ -303,8 +434,9 @@ const ProfileSection = ({ isDarkMode, toggleDarkMode }) => {
               variant="primary"
               icon={Save}
               className="hover:scale-105"
+              disabled={saving}
             >
-              Save Changes
+              {saving ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>
