@@ -580,22 +580,37 @@ const Dashboard = () => {
   // Fetch tasks from API on component mount
   useEffect(() => {
     const fetchTasks = async () => {
+      if (!localStorage.getItem("token")) {
+        console.log("No token found");
+        return;
+      }
+
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/tasks/get');
+        const response = await axios.post(
+          "http://localhost:5000/api/tasks/get",
+          { token: localStorage.getItem("token") },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        console.log(response.data.tasks, "tasks from dashboard");
         if (response.data && response.data.tasks) {
-          dispatch(getAllTask(response.data));
+          dispatch(getAllTask({ tasks: response.data.tasks }));
         }
       } catch (error) {
         console.error('Error fetching tasks:', error);
-        toast.error('Failed to fetch tasks');
+        toast.error('Failed to fetch tasks. Please try again!', {
+          position: "top-right",
+          autoClose: 3000,
+          theme: isDarkMode ? "dark" : "light",
+        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchTasks();
-  }, [dispatch]);
+  }, [dispatch, isDarkMode]);
 
   // Calculate task stats for charts
   const completedTasks = tasks.filter(task => task.status === 'completed').length;

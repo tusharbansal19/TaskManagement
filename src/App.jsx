@@ -11,6 +11,7 @@ import Footer from './Components/Footer'; // VERIFY PATH: Ensure this is correct
 import Navbar from './Components/Navbar'; // VERIFY PATH: Ensure this is correct (e.g., './Components/Navbar')
 import TSidebar from './Components/Sidebar'; // VERIFY PATH: Ensure this is correct (e.g., './Components/Sidebar')
 import { ThemeProvider, useTheme } from './ThemeContext'; // VERIFY PATH: Ensure this is correct (e.g., './ThemeContext' or './Context/ThemeContext')
+import ProfileSection from './pages/ProfileSection';
 
 
 function MainLayout({ children }) {
@@ -72,6 +73,13 @@ function App() {
           {/* Router manages application routing */}
           <Router>
             <Routes>
+              <Route path="/settings" element={
+                // <ProtectedRoute>
+                  <MainLayout>
+                    <ProfileSection />
+                  </MainLayout>
+             
+              } />
               {/* Route for login page, protected for signed-up users */}
               <Route path="/login" element={
                 <ProtectedSignUP>
