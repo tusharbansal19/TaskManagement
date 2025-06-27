@@ -19,6 +19,7 @@ export default [
     },
     settings: { react: { version: '18.3' } },
     plugins: {
+      'tailwindcss-animate': tailwindcssAnimate,
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,

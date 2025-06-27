@@ -203,11 +203,11 @@ const DailyTaskBarChart = ({ data }) => {
   }, [data]);
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height={180}>
       <BarChart data={barData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
-        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
         <Tooltip
           cursor={{ fill: 'rgba(0,0,0,0.1)' }}
           contentStyle={{ 
@@ -217,15 +217,15 @@ const DailyTaskBarChart = ({ data }) => {
             backgroundColor: 'rgba(255, 255, 255, 0.95)', 
             backdropFilter: 'blur(12px)', 
             color: '#333',
-            fontSize: '12px',
+            fontSize: '11px',
             padding: '12px 16px'
           }}
           itemStyle={{ fontWeight: 'bold' }}
         />
         <Legend 
           iconType="circle" 
-          iconSize={8}
-          wrapperStyle={{ fontSize: '12px' }}
+          iconSize={6}
+          wrapperStyle={{ fontSize: '11px' }}
         />
         <Bar dataKey="Completed" fill="#10B981" radius={[4, 4, 0, 0]} />
         <Bar dataKey="Incomplete" fill="#EF4444" radius={[4, 4, 0, 0]} />
@@ -256,11 +256,11 @@ const TaskTrendAreaChart = ({ data, isDarkMode }) => {
   }, [data]);
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height={180}>
       <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#4a4a4a' : '#e0e0e0'} />
-        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
+        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
         <Tooltip
           contentStyle={{
             borderRadius: '8px',
@@ -269,7 +269,7 @@ const TaskTrendAreaChart = ({ data, isDarkMode }) => {
             backgroundColor: isDarkMode ? 'rgba(55, 65, 81, 0.95)' : 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(8px)',
             color: isDarkMode ? '#e5e7eb' : '#333',
-            fontSize: '12px',
+            fontSize: '11px',
             padding: '8px 12px'
           }}
           itemStyle={{ fontWeight: 'bold', color: isDarkMode ? '#e5e7eb' : '#555' }}
@@ -288,7 +288,7 @@ const TaskTrendAreaChart = ({ data, isDarkMode }) => {
           fillOpacity={1}
           fill="url(#colorCount)"
           strokeWidth={2}
-          activeDot={{ r: 6, fill: '#8884d8', stroke: 'white', strokeWidth: 2 }}
+          activeDot={{ r: 5, fill: '#8884d8', stroke: 'white', strokeWidth: 2 }}
           className="transition-all duration-500 ease-in-out"
         />
       </AreaChart>
@@ -341,18 +341,18 @@ const TaskCalendar = ({ tasks }) => {
 
   return (
     <Card title="Task Calendar" className="lg:col-span-1 xl:col-span-1">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-3">
         <Button onClick={prevMonth} variant="ghost" icon={ChevronLeft} />
-        <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+        <h4 className="text-base font-bold text-gray-900 dark:text-gray-100">
           {currentMonth.format('MMMM YYYY')}
         </h4>
         <Button onClick={nextMonth} variant="ghost" icon={ChevronRight} />
       </div>
-      <div className="grid grid-cols-7 gap-2 text-center text-sm font-semibold text-gray-500 dark:text-gray-400">
-        {weekdays.map(day => <div key={day} className="py-2">{day}</div>)}
+      <div className="grid grid-cols-7 gap-1.5 text-center text-xs font-semibold text-gray-500 dark:text-gray-400">
+        {weekdays.map(day => <div key={day} className="py-1.5">{day}</div>)}
       </div>
-      <div className="grid grid-cols-7 gap-2">
-        {monthStartPadding.map((_, index) => <div key={`empty-${index}`} className="h-12"></div>)}
+      <div className="grid grid-cols-7 gap-1.5">
+        {monthStartPadding.map((_, index) => <div key={`empty-${index}`} className="h-10"></div>)}
         {daysArray.map(day => {
           const date = currentMonth.date(day).format('YYYY-MM-DD');
           const tasksOnDay = taskDates[date];
@@ -363,7 +363,7 @@ const TaskCalendar = ({ tasks }) => {
             <div
               key={day}
               className={`
-                h-12 flex flex-col items-center justify-center rounded-lg cursor-pointer
+                h-10 flex flex-col items-center justify-center rounded-lg cursor-pointer
                 transition-all duration-200 ease-in-out relative group
                 ${isToday ? 'bg-blue-100 dark:bg-blue-900 border-2 border-blue-500' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}
                 ${isSelected ? 'bg-blue-500 text-white shadow-lg scale-105' : ''}
@@ -371,16 +371,16 @@ const TaskCalendar = ({ tasks }) => {
               onClick={() => handleDateClick(day)}
             >
               <div className={`
-                w-8 h-8 rounded-full flex items-center justify-center font-bold
+                w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm
                 ${isSelected ? 'bg-white text-blue-600' : 'group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-600 dark:group-hover:text-white'}
                 ${isToday && !isSelected ? 'text-blue-700 dark:text-blue-200' : 'text-gray-900 dark:text-gray-100'}
               `}>
                 {day}
               </div>
               {tasksOnDay && (
-                <div className="absolute bottom-1 flex space-x-1">
-                  {tasksOnDay.completed > 0 && <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>}
-                  {tasksOnDay.incomplete > 0 && <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>}
+                <div className="absolute bottom-0.5 flex space-x-0.5">
+                  {tasksOnDay.completed > 0 && <span className="w-1 h-1 bg-emerald-500 rounded-full"></span>}
+                  {tasksOnDay.incomplete > 0 && <span className="w-1 h-1 bg-rose-500 rounded-full"></span>}
                 </div>
               )}
             </div>
@@ -393,26 +393,26 @@ const TaskCalendar = ({ tasks }) => {
         title={`Tasks on ${selectedDate.format('MMMM DD, YYYY')}`}
       >
         {tasksForSelectedDate.length > 0 ? (
-          <ul className="space-y-3">
+          <ul className="space-y-2">
             {tasksForSelectedDate.map(task => (
               <li
                 key={task._id}
                 className={`
-                  p-4 rounded-xl transition-all duration-300 transform-gpu
+                  p-3 rounded-xl transition-all duration-300 transform-gpu
                   ${task.status === 'completed' ? 'bg-emerald-50 dark:bg-emerald-900 border-l-4 border-emerald-400' : 'bg-rose-50 dark:bg-rose-900 border-l-4 border-rose-400'}
                   hover:scale-[1.02] hover:shadow-lg
                 `}
               >
                 <div className="flex justify-between items-start">
-                  <h5 className="font-bold text-gray-900 dark:text-gray-100 text-lg">{task.title}</h5>
-                  <span className={`text-xs font-semibold px-2 py-1 rounded-full capitalize ${
+                  <h5 className="font-bold text-gray-900 dark:text-gray-100 text-sm">{task.title}</h5>
+                  <span className={`text-xs font-semibold px-1.5 py-0.5 rounded-full capitalize ${
                     task.status === 'completed' ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-700 dark:text-emerald-100' : 'bg-rose-200 text-rose-800 dark:bg-rose-700 dark:text-rose-100'
                   }`}>
                     {task.status}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{task.description}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Due: {dayjs(task.dueDate).format('MMM DD, YYYY')}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300 mt-1">{task.description}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">Due: {dayjs(task.dueDate).format('MMM DD, YYYY')}</p>
               </li>
             ))}
           </ul>
@@ -520,12 +520,12 @@ const TaskDistributionQuadrant = ({ tasks }) => {
     <Card title="Task Distribution" className="h-full" delay={0}>
       <div 
         ref={quadrantRef}
-        className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 h-full min-h-[160px] sm:min-h-[180px] md:min-h-[200px]"
+        className="grid grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 h-full min-h-[140px] sm:min-h-[160px] md:min-h-[180px]"
       >
         {quadrants.map((quadrant, index) => (
           <div
             key={quadrant.title}
-            className={`flex flex-col items-center justify-center rounded-lg sm:rounded-xl md:rounded-2xl p-2 sm:p-3 md:p-4 transition-all duration-700 transform hover:scale-105 group cursor-pointer relative ${
+            className={`flex flex-col items-center justify-center rounded-lg sm:rounded-xl md:rounded-2xl p-1.5 sm:p-2 md:p-3 transition-all duration-700 transform hover:scale-105 group cursor-pointer relative ${
               isVisible 
                 ? 'opacity-100 translate-y-0 scale-100' 
                 : 'opacity-0 translate-y-8 scale-95'
@@ -537,17 +537,17 @@ const TaskDistributionQuadrant = ({ tasks }) => {
               transitionDelay: `${quadrant.delay * 100}ms`
             }}
           >
-            <div className={`p-1.5 sm:p-2 md:p-3 rounded-lg ${quadrant.color} bg-opacity-20 mb-1.5 sm:mb-2 md:mb-3 group-hover:scale-110 transition-transform duration-300`}>
+            <div className={`p-1 sm:p-1.5 md:p-2 rounded-lg ${quadrant.color} bg-opacity-20 mb-1 sm:mb-1.5 md:mb-2 group-hover:scale-110 transition-transform duration-300`}>
               <quadrant.icon 
-                size={16} 
-                className={`sm:w-5 sm:h-5 ${quadrant.textColor} ${quadrant.darkTextColor} group-hover:rotate-12 transition-transform duration-300`} 
+                size={7} 
+                className={`sm:w-4 sm:h-4 ${quadrant.textColor} ${quadrant.darkTextColor} group-hover:rotate-12 transition-transform duration-300`} 
               />
             </div>
             <div className="text-center">
-              <p className="text-sm sm:text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100 mb-0.5 sm:mb-1">
+              <p className="text-sm sm:text-base md:text-sm font-bold text-gray-900 dark:text-gray-100 mb-0.5">
                 {quadrant.count}
               </p>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium leading-tight">
+              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium leading-tight text-sm">
                 {quadrant.title}
               </p>
             </div>
@@ -561,8 +561,8 @@ const TaskDistributionQuadrant = ({ tasks }) => {
       </div>
       
       {/* Summary text */}
-      <div className="mt-3 sm:mt-4 text-center">
-        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+      <div className="mt-2 sm:mt-3 text-center">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           Total: <span className="font-semibold text-gray-700 dark:text-gray-300">{tasks.length}</span> tasks
         </p>
       </div>
@@ -606,10 +606,10 @@ const DailyTaskLoadRange = ({ tasks }) => {
 
   return (
     <Card title="Daily Task Load" className="h-full">
-      <ResponsiveContainer width="100%" height={160}>
+      <ResponsiveContainer width="100%" height={140}>
         <BarChart data={taskLoadData} layout="vertical" margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
           <XAxis type="number" hide />
-          <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={50} tick={{ fontSize: 12 }} />
+          <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={50} tick={{ fontSize: 11 }} />
           <Tooltip
             formatter={(value, name) => [`${value} tasks`, 'Load']}
             contentStyle={{ 
@@ -619,76 +619,27 @@ const DailyTaskLoadRange = ({ tasks }) => {
               backgroundColor: 'rgba(255, 255, 255, 0.95)', 
               backdropFilter: 'blur(8px)', 
               color: '#333',
-              fontSize: '12px',
+              fontSize: '11px',
               padding: '8px 12px'
             }}
             itemStyle={{ fontWeight: 'bold' }}
           />
-          <Bar dataKey="tasks" barSize={15} radius={[0, 6, 6, 0]}>
+          <Bar dataKey="tasks" barSize={12} radius={[0, 6, 6, 0]}>
             {taskLoadData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} className="transition-all duration-300 hover:opacity-80" />
             ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2 px-2">
+      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1.5 px-2">
         <span>Low Load</span>
         <span>High Load</span>
       </div>
-      <div className="w-full h-1.5 rounded-full bg-gradient-to-r from-green-500 to-red-500 mt-1"></div>
+      <div className="w-full h-1 rounded-full bg-gradient-to-r from-green-500 to-red-500 mt-1"></div>
     </Card>
   );
 };
 
-const OverallPerformanceCard = ({ tasks }) => {
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.status === 'completed').length;
-  const incompleteTasks = tasks.filter(task => task.status !== 'completed').length;
-  const completionRate = totalTasks > 0 ? ((completedTasks / totalTasks) * 100).toFixed(1) : 0;
-
-  // Mock data for trends (can be expanded with real data if available)
-  const previousCompletionRate = 75.5; // Example
-  const trend = completionRate >= previousCompletionRate ? 'up' : 'down';
-
-  return (
-    <Card title="Overall Performance" className="lg:col-span-1 xl:col-span-1">
-      <div className="flex flex-col space-y-4">
-        <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900 rounded-lg transition-all duration-300 hover:bg-blue-100 dark:hover:bg-blue-800">
-          <div className="flex items-center">
-            <List size={24} className="text-blue-600 dark:text-blue-400 mr-3" />
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Total Tasks</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{totalTasks}</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-900 rounded-lg transition-all duration-300 hover:bg-emerald-100 dark:hover:bg-emerald-800">
-          <div className="flex items-center">
-            <CheckSquare size={24} className="text-emerald-600 dark:text-emerald-400 mr-3" />
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Completion Rate</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{completionRate}%</p>
-            </div>
-          </div>
-          {trend === 'up' ? (
-            <TrendingUp size={24} className="text-emerald-500" />
-          ) : (
-            <TrendingDown size={24} className="text-rose-500" />
-          )}
-        </div>
-        <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900 rounded-lg transition-all duration-300 hover:bg-purple-100 dark:hover:bg-purple-800">
-          <div className="flex items-center">
-            <Clock size={24} className="text-purple-600 dark:text-purple-400 mr-3" />
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Avg. Time to Complete</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">3.2 days</p> {/* Mock data */}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-};
 
 
 // --- Dashboard Component (Main App) ---
@@ -1069,10 +1020,13 @@ const Dashboard = () => {
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-8 animate-fade-in">
 
               {/* Task Distribution Quadrant */}
+
+              
               <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
-                <TaskDistributionQuadrant tasks={tasks} />
+                <DailyTaskLoadRange tasks={tasks} />
               </div>
 
+              
               {/* Daily Task Bar Chart */}
               <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
                 <Card title="Daily Task Performance" className="h-full" delay={1}>
@@ -1088,9 +1042,7 @@ const Dashboard = () => {
               </div>
 
               {/* Daily Task Load Range */}
-              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
-                <DailyTaskLoadRange tasks={tasks} />
-              </div>
+
 
               {/* Task Trend Area Chart */}
               <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
@@ -1099,13 +1051,17 @@ const Dashboard = () => {
                 </Card>
               </div>
 
+              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
+                <TaskDistributionQuadrant tasks={tasks} />
+              </div>
+
               {/* Task Calendar */}
               <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
                 <TaskCalendar tasks={tasks} />
               </div>
 
               {/* Projects Section - Now Shows Real User Tasks */}
-              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3 2xl:col-span-3">
+              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3 2xl:col-span-3 w-full" >
                 <Card title="My Tasks" className="h-full" delay={4}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
