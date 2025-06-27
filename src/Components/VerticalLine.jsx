@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { VerticalTimeline, VerticalTimelineElement } from "react-vertical-timeline-component";
 import "react-vertical-timeline-component/style.min.css";
 import { FaCheckCircle, FaHourglassHalf } from "react-icons/fa";
+import { useTheme } from '../ThemeContext';
 
 const TaskTimeline = ({ tasks }) => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const timelineRef = useRef(null);
+  const { isDarkMode } = useTheme();
   
 
   useEffect(() => {
@@ -57,7 +59,7 @@ const TaskTimeline = ({ tasks }) => {
 
   return (
     <div
-      className="bg-[#2C2B5A] text-white p-4 sm:p-8 rounded-lg shadow-lg max-w-4xl mx-auto relative"
+      className={`${isDarkMode ? 'bg-gray-800' : 'bg-[#2C2B5A]'} text-white p-4 sm:p-8 rounded-lg shadow-lg max-w-4xl mx-auto relative`}
     >
       <h2 className="text-2xl sm:text-3xl font-extrabold text-center mb-6">
         Task Timeline
@@ -101,11 +103,11 @@ const TaskTimeline = ({ tasks }) => {
               }}
               contentStyle={{
                 borderTop: `4px solid ${isOverdue(task.dueDate) ? "red" : "#4caf50"}`,
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: isDarkMode ? "rgba(55, 65, 81, 0.9)" : "rgba(255, 255, 255, 0.1)",
                 backdropFilter: "blur(8px)",
                 color: "#fff",
               }}
-              contentArrowStyle={{ borderRight: "7px solid rgba(255, 255, 255, 0.1)" }}
+              contentArrowStyle={{ borderRight: `7px solid ${isDarkMode ? "rgba(55, 65, 81, 0.9)" : "rgba(255, 255, 255, 0.1)"}` }}
               icon={index % 2 === 0 ? <FaHourglassHalf /> : <FaCheckCircle />}
               onClick={() => handlePointClick(task)}
             >
@@ -128,16 +130,16 @@ const TaskTimeline = ({ tasks }) => {
 
       {/* Task Details Modal */}
       {selectedTask && (
-        <div className="mt-8 bg-white text-black p-4 sm:p-6 rounded-lg shadow-lg">
+        <div className={`mt-8 ${isDarkMode ? 'bg-gray-700 text-gray-100' : 'bg-white text-black'} p-4 sm:p-6 rounded-lg shadow-lg`}>
           <h3 className="text-xl sm:text-2xl font-bold mb-4 hover:underline">{selectedTask.title}</h3>
-          <p className="text-base sm:text-lg font-semibold text-gray-700 mb-2">
+          <p className={`text-base sm:text-lg font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
             <strong>Description:</strong> {selectedTask.description}
           </p>
-          <p className="text-base sm:text-lg font-semibold text-gray-700">
+          <p className={`text-base sm:text-lg font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             <strong>Due Date:</strong> {selectedTask.dueDate}
           </p>
           {selectedTask.important && selectedTask.important.startTime && selectedTask.important.endTime && (
-            <p className="text-base sm:text-lg font-semibold text-gray-700 mt-2">
+            <p className={`text-base sm:text-lg font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mt-2`}>
               <strong>Time:</strong> {formatTaskTime(selectedTask.important.startTime, selectedTask.important.endTime)}
             </p>
           )}

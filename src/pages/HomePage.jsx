@@ -4,6 +4,7 @@ import axios from 'axios';
 import Loader from '../Components/Loader';
 import PostCard from '../Components/PostCard ';
 import Footer from '../Components/Footer';
+import { useTheme } from '../ThemeContext';
 
 
 
@@ -15,6 +16,7 @@ const HomePage = () => {
   const [searching, setSearching] = useState(false); // For search-specific loader
   const [postDataArray, setPostDataArray] = useState([]); // New array to store post data
   const [suggestions, setSuggestions] = useState([]); // For recommendations dropdown
+  const { isDarkMode } = useTheme();
 
   // Fetch all posts from API on mount
   const fetchAllPosts = async () => {
@@ -110,7 +112,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="mt-20 ml-[0px] sm:ml-[10%]">
+      <div className={`mt-20 ml-[0px] sm:ml-[10%] ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
         {/* Search Bar */}
         <div className="p-4 flex relative w-full justify-center">
           <div className="relative w-full">
@@ -118,24 +120,24 @@ const HomePage = () => {
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search by Post Name or Author"
-              className="bg-black text-white w-[60%] p-3 rounded-l-2xl border-2 border-black"
+              className={`${isDarkMode ? 'bg-gray-800 text-gray-100 border-gray-600' : 'bg-black text-white border-black'} w-[60%] p-3 rounded-l-2xl border-2`}
             />
             <button
               onClick={handleSearch}
-              className="searchButton border-2 border-black rounded-r-3xl p-3 hover:bg-black hover:text-white"
+              className={`searchButton border-2 ${isDarkMode ? 'border-gray-600 hover:bg-gray-700' : 'border-black hover:bg-black hover:text-white'} rounded-r-3xl p-3`}
             >
               Search
             </button>
             {/* Recommendations Dropdown */}
             {suggestions.length > 0 && (
-              <div className="absolute bg-white border border-black rounded-lg mt-1 z-10 w-[60%]">
+              <div className={`absolute ${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-black'} border rounded-lg mt-1 z-10 w-[60%]`}>
                 {suggestions.map((suggestion) => (
                   <div
                     key={suggestion.id}
                     onClick={() => handleSuggestionClick(suggestion)}
-                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                    className={`p-2 ${isDarkMode ? 'hover:bg-gray-700 text-gray-100' : 'hover:bg-gray-200'} cursor-pointer`}
                   >
-                    {suggestion.title} - <span className="text-gray-500">{suggestion.author}</span>
+                    {suggestion.title} - <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{suggestion.author}</span>
                   </div>
                 ))}
               </div>
@@ -144,10 +146,10 @@ const HomePage = () => {
         </div>
 
         {/* Posts Display */}
-        <div className=" grid  grid-cols-1 gap-10 pr-10 sm:pr-32">
+        <div className="grid grid-cols-1 gap-10 pr-10 sm:pr-32">
           {loading || searching ? (
             <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-red-500"></div>
+              <div className={`animate-spin rounded-full h-32 w-32 border-t-4 ${isDarkMode ? 'border-blue-400' : 'border-red-500'}`}></div>
             </div>
           ) : filteredPosts.length > 0 ? (
             filteredPosts.map((post) => <PostCard key={post._id} post={post} />)

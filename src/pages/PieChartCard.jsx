@@ -14,7 +14,7 @@ const PieChartCard = ({ pieData }) => {
 
   return (
     <>
-      <div className="bg-[#2C2B5A] text-white max-w-[90%] mx-auto md:max-w-full p-4 rounded-lg shadow-md hover:scale-105 transition-transform duration-300 w-full">
+      <div className="bg-darkCard text-white max-w-[90%] mx-auto md:max-w-full p-4 rounded-lg shadow-md hover:scale-105 transition-transform duration-300 w-full">
         <div className="flex flex-col items-center">
           {/* Title */}
           <h2 className={`font-bold ${isSmallScreen ? "text-sm" : "text-md"} mb-4 underline`}>

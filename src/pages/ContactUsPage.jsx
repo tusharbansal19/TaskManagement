@@ -10,10 +10,12 @@ import {
 } from "../features/styleSlice";
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaPaperPlane } from "react-icons/fa";
 import { ClipLoader } from "react-spinners";
+import { useTheme } from '../ThemeContext';
 
 const ContactUsPage = () => {
   const dispatch = useDispatch();
   const styleSettings = useSelector((state) => state.style);
+  const { isDarkMode } = useTheme();
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({

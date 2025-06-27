@@ -1,21 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import { useAuth } from "../Auth/AuthProtectComponents";
+import { Menu, X, Sun, Moon, LogOut, UserCircle } from 'lucide-react';
+import { useTheme } from '../ThemeContext';
 
-const Navbar = () => {
-  const {logout}=useAuth();
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false); // State for mobile menu toggle
+const Navbar = ({ toggleSidebar }) => {
+  const { logout } = useAuth();
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [dropdownOpen, setDropdownOpen] = useState(false); // State for profile dropdown
   const dropdownRef = useRef(null);
-const navigator=useNavigate();
-  const menuItems = [
-    
-    { label: "Home", path: "/" },
-    { label: "Create", path: "/tasks" },
-    { label: "Daily", path: "/daily" },
-  
+  const navigator = useNavigate();
+  const [showNavbar, setShowNavbar] = useState(true);
+  const lastScrollY = useRef(window.scrollY);
 
+  const menuItems = [
+    { label: "Overview", path: "/" },
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Projects", path: "/projects" },
+    { label: "Tasks", path: "/tasks" },
+    { label: "Team", path: "/team" },
+    { label: "Settings", path: "/settings" },
   ];
 
   // Handle outside click to close the dropdown
@@ -31,128 +35,116 @@ const navigator=useNavigate();
     };
   }, []);
 
+  // Hide navbar on scroll down, show on scroll up
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY < 50) {
+        setShowNavbar(true);
+        lastScrollY.current = window.scrollY;
+        return;
+      }
+      if (window.scrollY > lastScrollY.current) {
+        setShowNavbar(false); // scrolling down
+      } else {
+        setShowNavbar(true); // scrolling up
+      }
+      lastScrollY.current = window.scrollY;
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    localStorage.clear();
+    navigator("/login");
+    setDropdownOpen(false);
+  };
+
   return (
-    <nav className="fixed z-[100] w-full text-white p-4 shadow-md bg-[#2A265F]">
-      <div className="relative z-10 flex justify-between items-center">
+    <nav className={`fixed z-[100] w-full p-4 shadow-md transition-colors duration-300
+      ${isDarkMode ? 'bg-gray-900 text-gray-100 shadow-lg' : 'bg-white text-gray-900 shadow-md'}
+      transition-transform duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
+      style={{ willChange: 'transform' }}>
+      <div className="relative z-10 flex justify-between items-center max-w-7xl mx-auto">
         {/* Logo */}
-        <Link to="/" className="flex items-center">
+        <Link to="/" className="flex items-center group">
           <img
-            src="/image/logo.png"
+            src="https://placehold.co/40x40/8B5CF6/FFFFFF?text=Logo"
             alt="Logo"
-            className="h-[40px] border-white border-2 rounded-sm hover:border-blue-950"
+            className="h-10 w-10 rounded-full border-2 border-purple-500 group-hover:border-blue-400 transition-colors duration-300"
           />
+          <span className={`ml-3 text-xl font-bold transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>TaskFlow</span>
         </Link>
 
-        {/* Hamburger Icon for Mobile */}
+        {/* Hamburger Icon for Mobile - Toggles Sidebar */}
         <button
-          className="block md:hidden text-white text-2xl"
-          onClick={() => setMenuOpen(!menuOpen)}
+          className={`block md:hidden p-2 rounded-md transition-colors duration-300
+            ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`}
+          onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
         >
-          ☰
+          <Menu size={24} />
         </button>
 
-        {/* Navigation Menu */}
-        <div className="flex items-center">
-          <ul
-            className={`absolute md:static top-16 left-0 w-full md:w-auto md:flex bg-black md:bg-transparent transition-transform duration-300 ${
-              menuOpen ? "translate-y-0" : "translate-y-[-300px]"
-            } md:translate-y-0`}
+        {/* Desktop Navigation Menu */}
+        <div className="hidden md:flex items-center space-x-6">
+          {menuItems.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.path}
+              className={({ isActive }) =>
+                `relative text-lg font-medium transition-colors duration-300 px-2 py-1
+                ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
+                ${isActive ? (isDarkMode ? 'text-blue-400' : 'text-blue-600') : ''}`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  {item.label}
+                  {isActive && (
+                    <span className={`absolute bottom-0 left-0 w-full h-0.5 rounded-full transform scale-x-100 transition-transform duration-300
+                      ${isDarkMode ? 'bg-blue-400' : 'bg-blue-600'}`}></span>
+                  )}
+                </>
+              )}
+            </NavLink>
+          ))}
+
+          {/* Theme Toggle Button (Desktop) */}
+          <button
+            onClick={toggleDarkMode}
+            className={`p-2 rounded-full transition-colors duration-300
+              ${isDarkMode ? 'bg-gray-700 text-yellow-300 hover:bg-gray-600' : 'bg-gray-100 text-yellow-600 hover:bg-gray-200'}`}
+            aria-label="Toggle dark mode"
           >
-            {/* Sliding Box Effect */}
-            <div
-              className={`absolute bg-purple-800 bg-opacity-50 rounded-lg transition-all duration-300 hidden md:block`}
-              style={{
-                top: "50%",
-                transform: "translateY(-50%)",
-                left:
-                  activeIndex !== null
-                    ? `${(activeIndex * 100) / menuItems.length}%`
-                    : "-100%",
-                width:
-                  activeIndex !== null
-                    ? `calc(100% / ${menuItems.length})`
-                    : "0",
-                height: "40px",
-              }}
-            ></div>
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
 
-            {/* Menu Items */}
-            {menuItems.map((item, index) => (
-              <li
-                key={index}
-                className="relative z-50 px-4 py-2 text-sm flex items-center space-x-2 cursor-pointer hover:text-yellow-300 transition-colors duration-300"
-                onMouseEnter={() => setActiveIndex(index)}
-                onMouseLeave={() => setActiveIndex(null)}
-              >
-                <Link
-                  to={item.path}
-                  className="flex items-center space-x-2"
-                  onClick={() => setMenuOpen(false)} // Close menu when an item is clicked
-                >
-                  <span>{item.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          {/* Profile Image and Dropdown */}
+          {/* Profile Image and Dropdown (Desktop) */}
           <div className="relative ml-4" ref={dropdownRef}>
             <img
-              src="" // Placeholder image
-              alt={"t"}
-              className="w-10 h-10 rounded-full bg-white cursor-pointer flex justify-center items-center bg-opacity-25"
+              src="https://placehold.co/40x40/8B5CF6/FFFFFF?text=JD"
+              alt="User Avatar"
+              className="w-10 h-10 rounded-full cursor-pointer border-2 border-transparent hover:border-blue-400 transition-colors duration-300"
               onClick={() => setDropdownOpen((prev) => !prev)}
             />
             {dropdownOpen && (
               <div
-              style={{
-                position: "absolute",
-                top: "50px",
-                right: 0,
-                backgroundColor: "#2a2a40",
-                color: "#fff",
-                borderRadius: "8px",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                zIndex: 1000,
-                padding: "10px",
-                minWidth: "200px",
-              }}
-            >
-              <p style={{ margin: "5px 0", fontWeight: "bold" }}>
-                {localStorage.getItem("username")}
-              </p>
-              <p style={{ margin: "5px 0", fontSize: "12px", color: "#aaa" }}>
-                {localStorage.getItem("email")}
-              </p>
-              <button
-                onClick={() => {
-                  
-                  // Redirect to login page after logout
-                  // Close menu after logout
-                  
-                  logout();
-                  navigator("/login")
-                  setDropdownOpen(false);
-                  localStorage.clear("username");
-                  localStorage.clear("email");
-                  localStorage.clear("token");
-                  // return <Nanigate to="/login"/> // Close dropdown after logout
-                 
-                }}
-                style={{
-                  marginTop: "10px",
-                  width: "100%",
-                  padding: "10px",
-                  backgroundColor: "#f00",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
+                className={`absolute top-12 right-0 w-48 rounded-lg shadow-xl p-3 transition-all duration-300 transform origin-top-right
+                  ${isDarkMode ? 'bg-gray-800 text-gray-100 border border-gray-700' : 'bg-white text-gray-900 border border-gray-200'}`}
               >
-                Logout
-              </button>
-            </div>
+                <p className={`font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{localStorage.getItem("username") || "Guest User"}</p>
+                <p className={`text-xs mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{localStorage.getItem("email") || "guest@example.com"}</p>
+                <button
+                  onClick={handleLogout}
+                  className={`w-full flex items-center justify-center px-3 py-2 rounded-md font-medium transition-colors duration-300
+                    ${isDarkMode ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-red-500 hover:bg-red-600 text-white'}`}
+                >
+                  <LogOut size={16} className="mr-2" />
+                  Logout
+                </button>
+              </div>
             )}
           </div>
         </div>

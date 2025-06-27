@@ -22,14 +22,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setIsAuthenticated(false);
   };
-  useEffect(() => {
-    if(localStorage.getItem('token')){
-      setIsAuthenticated(true);
-    }
-    else{
-      setIsAuthenticated(false);
-    }
-  },[localStorage.getItem('token')])
+2
 
   return (
 
@@ -60,17 +53,7 @@ export const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" />;
   }
 
-  return <>
-        <Navbar/>
-      <div style={{ display: 'flex' } } className=' overflow-hidden'>
-          <TSidebar />
-          <main style={{ flexGrow: 1, padding: '1px', background: '#1e1e2d', color: '#fff' }} className='overflow-hidden'>
-           
-  {children}
-          </main>
-        </div>
-        <Footer/>
-  </>
+  return <>{children}</>;
 };
 export const ProtectedSignUP = ({ children }) => {
   const { isAuthenticated ,login, logout} = useAuth();

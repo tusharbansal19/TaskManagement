@@ -1,23 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaEdit, FaCheck, FaTrash, FaPlus } from "react-icons/fa";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { FaEdit, FaCheck, FaTrash, FaClock, FaCalendarAlt, FaEllipsisV } from "react-icons/fa";
 
 const TaskCard = ({
-  task,
-  setEditingTask,
-  setModalOpen,
-  handleToggleCompletion,
-  setTaskToDelete,
-  setDeleteModalOpen,
+  task = {
+    _id: "1",
+    title: "Abstract 3D Design",
+    description: "Create stunning 3D abstract visualizations with modern design principles and dynamic lighting effects.",
+    dueDate: "2025-07-15",
+    status: "in-progress"
+  },
+  setEditingTask = () => {},
+  setModalOpen = () => {},
+  handleToggleCompletion = () => {},
+  setTaskToDelete = () => {},
+  setDeleteModalOpen = () => {}
 }) => {
-  const [filteredTasks, setFilteredTasks] = useState([task]);
   const [remainingTime, setRemainingTime] = useState("");
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const dropdownRef = useRef();
 
   // Calculate remaining time
   useEffect(() => {
-    //////////console.log(task,"lwnmdwiafcaeh")
     const calculateRemainingTime = () => {
       const now = new Date();
       const dueDate = new Date(task.dueDate);
@@ -34,18 +38,9 @@ const TaskCard = ({
     };
 
     calculateRemainingTime();
-    const timer = setInterval(calculateRemainingTime, 60000); // Update every minute
-    return () => clearInterval(timer); // Cleanup on unmount
+    const timer = setInterval(calculateRemainingTime, 60000);
+    return () => clearInterval(timer);
   }, [task.dueDate]);
-
-  // Handle drag-and-drop functionality
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const reorderedTasks = Array.from(filteredTasks);
-    const [removed] = reorderedTasks.splice(result.source.index, 1);
-    reorderedTasks.splice(result.destination.index, 0, removed);
-    setFilteredTasks(reorderedTasks);
-  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -58,112 +53,190 @@ const TaskCard = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "completed":
+        return "from-emerald-500 to-green-600";
+      case "in-progress":
+        return "from-blue-500 to-purple-600";
+      case "pending":
+        return "from-orange-500 to-red-500";
+      default:
+        return "from-gray-500 to-gray-600";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "completed":
+        return "✓";
+      case "in-progress":
+        return "⟳";
+      case "pending":
+        return "⏳";
+      default:
+        return "○";
+    }
+  };
+
   return (
-    <DragDropContext onDragEnd={onDragEnd} className="p-0 m-0">
-      <div className="w-full p-1 md:p-4 bg-[#2C2B5A] text-white shadow-lg rounded-lg transition-all duration-300 hover:shadow-2xl hover:scale-105 relative"    onMouseLeave={() => setDropdownOpen((prev) => !prev)}>
-        {/* Title */}
-        <h1 className="text-xl mt-4 sm:text-2xl font-bold bg-[#8E44AD] p-2 rounded-md mb-1">
-          {task.title}
-        </h1>
-
-        {/* Description */}
-        <div className="flex gap-1 flex-col sm:flex-row w-full gap-x-1">
-        <p className="text-xs sm:text-sm my-1 sm:my-4 w-[70%]">
-            <span className="text-[#AFAFDF]">Due Date :</span>
-            <div className=" overflow-y-scroll p-2 w-full rounded-lg bg-[#3B3B80] text-white">
-              <p>{task.dueDate}</p>
-            </div>
-          </p>
-        </div>
-
-        {/* Status */}
-        <div className="flex gap-1 flex-row w-full">
-          <p className="text-[0.7rem] sm:text-xs mb-1 w-full">
-            <span className="text-[#AFAFDF]">Status:</span>
-            <div
-              className={`p-2 rounded-md mt-1 ${
-                task.status === "completed" ? "bg-green-500" : "bg-red-500"
-              } text-white`}
-            >
-              {task.status}
-            </div>
-          </p>
-
-          {/* Remaining Time */}
-          <p className="text-[0.7rem] sm:text-xs mb-1 w-full">
-            <span className="text-[#AFAFDF]">Time Remaining:</span>
-            <div
-              className={`p-2 rounded-md mt-1 ${
-                remainingTime === "Overdue" ? "bg-red-500" : "bg-[#3B3B80]"
-              }`}
-            >
-              {remainingTime}
-            </div>
-          </p>
-        </div>
-
-        {/* Actions */}
+    <div className="relative group">
+      {/* Animated background glow */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 rounded-2xl blur opacity-0 group-hover:opacity-75 transition duration-500 animate-pulse"></div>
+      
+      <div 
+        className="relative w-full max-w-md mx-auto bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900 backdrop-blur-xl border border-purple-500/20 rounded-2xl overflow-hidden transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Animated shimmer effect */}
+        <div className="absolute inset-0 -top-2 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-y-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
         
-
-        {/* Dropdown */}
-        <div className="" ref={dropdownRef}>
-          <button
-            onMouseEnter={() => setDropdownOpen((prev) => !prev)}
-          
-            className=" text-white p-1 text-sm italic font-bold  rounded-md mt-1 shadow-md hover:bg-[#8E44AD]"
-          >
-            More Options
-          </button>
-          {isDropdownOpen && (
-            <div className="absolute top-0 h-full  py-3 p-3  right-0 bg-[#3B3B80] bg-opacity-95 text-black shadow-lg rounded-r-lg w-32 z-[70]">
-            <p className="text-xs sm:text-sm my-1 sm:my-4 w-full">
-            <span className="text-[#AFAFDF]">Description:</span>
-            <div className="h-20 overflow-y-scroll p-2 w-full rounded-lg bg-[#3B3B80] text-white">
-              <p>{task.description} </p>
+        {/* Card Header */}
+        <div className="relative p-6 pb-4">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex-1">
+              <h1 className="text-xl font-bold text-white mb-2 line-clamp-2 group-hover:text-purple-300 transition-colors duration-300">
+                {task.title}
+              </h1>
+              <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed">
+                {task.description}
+              </p>
             </div>
-          </p>
-          <div className="flex justify-around  gap-y-3 flex-col mb-1 mt-1">
-            <div className="flex  items-center text-white gap-x-4 w-full "   onClick={() => {
-              setEditingTask(task);
-              setModalOpen(true);
-            }}>
-
-          <FaEdit
-            className="text-blue-400 cursor-pointer hover:text-blue-600 transition duration-200"
-          
-            />
-          <span>Edit</span>
-            </div>
-
-             <div className="flex  items-center text-white gap-x-4 w-full " onClick={() =>{
+            
+            {/* Dropdown Menu */}
+            <div className="relative ml-4" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!isDropdownOpen)}
+                className="p-2 rounded-lg bg-purple-600/20 border border-purple-500/30 text-purple-300 hover:bg-purple-600/40 hover:text-white transition-all duration-300 hover:scale-110"
+              >
+                <FaEllipsisV size={14} />
+              </button>
               
-              handleToggleCompletion(task._id)
-            }
-          }>
-
-          <FaCheck
-            className="text-green-400 cursor-pointer hover:text-green-600 transition duration-200"
-            
-          />
-           <span>Done</span>
+              {/* Enhanced Dropdown */}
+              <div className={`absolute top-12 right-0 w-48 bg-slate-800/95 backdrop-blur-xl border border-purple-500/30 rounded-xl shadow-2xl z-50 overflow-hidden transition-all duration-300 ${
+                isDropdownOpen 
+                  ? 'opacity-100 translate-y-0 scale-100' 
+                  : 'opacity-0 translate-y-2 scale-95 pointer-events-none'
+              }`}>
+                <div className="p-2">
+                  <button
+                    onClick={() => {
+                      setEditingTask(task);
+                      setModalOpen(true);
+                      setDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-blue-600/20 rounded-lg transition-all duration-200 group/item"
+                  >
+                    <FaEdit className="text-blue-400 group-hover/item:text-blue-300" />
+                    <span>Edit Task</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      handleToggleCompletion(task._id);
+                      setDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-green-600/20 rounded-lg transition-all duration-200 group/item"
+                  >
+                    <FaCheck className="text-green-400 group-hover/item:text-green-300" />
+                    <span>Mark Complete</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setTaskToDelete(task._id);
+                      setDeleteModalOpen(true);
+                      setDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-red-600/20 rounded-lg transition-all duration-200 group/item"
+                  >
+                    <FaTrash className="text-red-400 group-hover/item:text-red-300" />
+                    <span>Delete Task</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-           <div className="flex  items-center text-white gap-x-4 w-full " onClick={() => {
-              setTaskToDelete(task._id);
-              setDeleteModalOpen(true);
-            }}>
-
-          <FaTrash
-            className="text-red-400 cursor-pointer hover:text-red-600 transition duration-200"
-            
-            />
-             <span>Delete</span>
-            </div>
         </div>
+
+        {/* Card Body */}
+        <div className="px-6 pb-6 space-y-4">
+          {/* Status and Time Row */}
+          <div className="flex gap-3">
+            {/* Status Badge */}
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
+                <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Status</span>
+              </div>
+              <div className={`flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r ${getStatusColor(task.status)} text-white font-medium text-sm shadow-lg`}>
+                <span className="text-base">{getStatusIcon(task.status)}</span>
+                <span className="capitalize">{task.status.replace('-', ' ')}</span>
+              </div>
             </div>
-          )}
+
+            {/* Time Remaining */}
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <FaClock className="w-2 h-2 text-purple-400" />
+                <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Remaining</span>
+              </div>
+              <div className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm shadow-lg ${
+                remainingTime === "Overdue" 
+                  ? "bg-gradient-to-r from-red-500 to-red-600 text-white" 
+                  : "bg-slate-700/50 text-slate-300 border border-slate-600/50"
+              }`}>
+                <FaClock size={12} />
+                <span>{remainingTime}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Due Date */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <FaCalendarAlt className="w-2 h-2 text-purple-400" />
+              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Due Date</span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700/30 border border-slate-600/30 text-slate-300 text-sm">
+              <FaCalendarAlt size={12} />
+              <span>{new Date(task.dueDate).toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+              })}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Animated Progress Bar */}
+        <div className="h-1 bg-slate-800 overflow-hidden">
+          <div className={`h-full bg-gradient-to-r ${getStatusColor(task.status)} transform transition-all duration-1000 ${
+            isHovered ? 'translate-x-0' : '-translate-x-full'
+          }`}></div>
         </div>
       </div>
-    </DragDropContext>
+
+      <style jsx>{`
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-5px); }
+        }
+        
+        .group:hover .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+      `}</style>
+    </div>
   );
 };
 

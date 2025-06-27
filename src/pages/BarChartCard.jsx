@@ -11,7 +11,7 @@ import {
 
 const BarChartCard = ({taskPerformanceData}) => {
   return (
-    <div className="bg-[#2C2B5A] text-white pr-2 py-3  max-w-[80%] mx-auto md:max-w-full p-3 sm:p-3 rounded-lg shadow-md hover:scale-105 transition-transform duration-300 w-full flex flex-col">
+    <div className="bg-darkCard text-white pr-2 py-3 max-w-[80%] mx-auto md:max-w-full p-3 sm:p-3 rounded-lg shadow-md hover:scale-105 transition-transform duration-300 w-full flex flex-col">
       <h2 className="text-xl sm:text-lg font-bold mb-4 sm:mb-2 pl-3 mx-auto underline">
         Task Performance (Daily)
       </h2>

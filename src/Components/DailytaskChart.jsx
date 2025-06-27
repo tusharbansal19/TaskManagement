@@ -1,8 +1,11 @@
 import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer as LineResponsiveContainer } from "recharts";
+import { useTheme } from '../ThemeContext';
 
 const DailyLineChart = ({ tasks }) => {
+  const { isDarkMode } = useTheme();
+
   // Calculate total time and consumed time
   const totalTime = tasks.reduce((acc, task) => {
     const taskStartTime = new Date(task.important.startTime).getTime();
@@ -37,17 +40,24 @@ const DailyLineChart = ({ tasks }) => {
   });
 
   return (
-    <div className="p-4 sm:p-8 w-full bg-[#2C2B5A] text-white rounded-lg shadow-lg max-w-4xl mx-auto  flex  justify-between items-center ">
+    <div className={`p-4 sm:p-8 w-full ${isDarkMode ? 'bg-gray-800' : 'bg-[#2C2B5A]'} text-white rounded-lg shadow-lg max-w-4xl mx-auto flex justify-between items-center`}>
       {/* Line Chart for Task Duration */}
       <div className="mb-8 w-full ">
         <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-center">Task Duration vs Time</h3>
-        <div className="bg-white p-4 rounded-lg shadow-md flex">
+        <div className={`${isDarkMode ? 'bg-gray-700' : 'bg-white'} p-4 rounded-lg shadow-md flex`}>
           <LineResponsiveContainer width="100%" height={300}>
             <LineChart data={lineData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#4b5563" : "#e5e7eb"} />
+              <XAxis dataKey="name" stroke={isDarkMode ? "#d1d5db" : "#374151"} />
+              <YAxis stroke={isDarkMode ? "#d1d5db" : "#374151"} />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: isDarkMode ? "#374151" : "#ffffff",
+                  border: isDarkMode ? "1px solid #4b5563" : "1px solid #e5e7eb",
+                  borderRadius: "8px",
+                  color: isDarkMode ? "#f9fafb" : "#111827"
+                }}
+              />
               <Legend />
               <Line
                 type="monotone"
@@ -64,8 +74,8 @@ const DailyLineChart = ({ tasks }) => {
 
       {/* Pie Chart for Time Consumption */}
       <div>
-        <h3 className="text-xl sm:text-2xl font-semibold mb-4  min-w-[40%] text-center">Time Consumption</h3>
-        <div className="  rounded-lg shadow-md ">
+        <h3 className="text-xl sm:text-2xl font-semibold mb-4 min-w-[40%] text-center">Time Consumption</h3>
+        <div className="rounded-lg shadow-md">
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
               <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={5} fill="#8884d8" label>
@@ -78,18 +88,18 @@ const DailyLineChart = ({ tasks }) => {
       </div>
 
       {/* Details Below the Charts */}
-      <div className="mt-8 space-y-4 ">
+      <div className="mt-8 space-y-4">
         <div className="text-center">
           <h4 className="text-lg font-semibold">Total Time</h4>
-          <p className="text-md text-gray-200">{(totalTime / (1000 * 60 * 60)).toFixed(2)} hours</p>
+          <p className={`text-md ${isDarkMode ? 'text-gray-300' : 'text-gray-200'}`}>{(totalTime / (1000 * 60 * 60)).toFixed(2)} hours</p>
         </div>
         <div className="text-center">
           <h4 className="text-lg font-semibold">Consumed Time</h4>
-          <p className="text-md text-gray-200">{(consumedTime / (1000 * 60 * 60)).toFixed(2)} hours</p>
+          <p className={`text-md ${isDarkMode ? 'text-gray-300' : 'text-gray-200'}`}>{(consumedTime / (1000 * 60 * 60)).toFixed(2)} hours</p>
         </div>
         <div className="text-center">
           <h4 className="text-lg font-semibold">Remaining Time</h4>
-          <p className="text-md text-gray-200">{(remainingTime / (1000 * 60 * 60)).toFixed(2)} hours</p>
+          <p className={`text-md ${isDarkMode ? 'text-gray-300' : 'text-gray-200'}`}>{(remainingTime / (1000 * 60 * 60)).toFixed(2)} hours</p>
         </div>
       </div>
     </div>

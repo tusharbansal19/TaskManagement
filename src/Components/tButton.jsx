@@ -1,8 +1,10 @@
 import { Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTheme } from '../ThemeContext';
 
 const BackToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const { isDarkMode } = useTheme();
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -29,19 +31,17 @@ const BackToTopButton = () => {
   return (
     isVisible && (
       <Button className="z-[100]"
-  
         variant="contained"
         onClick={scrollToTop}
-        
-
         sx={{
           position: "fixed",
           bottom: "16px",
           right: "16px",
-          backgroundColor: "#8E44AD",
-          "&:hover": { backgroundColor: "#6C1B9B"
-
-           },
+          backgroundColor: isDarkMode ? "#6366f1" : "#8E44AD",
+          color: "white",
+          "&:hover": { 
+            backgroundColor: isDarkMode ? "#4f46e5" : "#6C1B9B"
+          },
         }}
       >
         Back to Top
