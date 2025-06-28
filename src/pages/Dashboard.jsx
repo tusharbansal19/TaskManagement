@@ -629,7 +629,7 @@ const TaskDistributionQuadrant = ({ tasks }) => {
     <Card title="Task Distribution" className="h-full" delay={0}>
       <div 
         ref={quadrantRef}
-        className="grid grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 h-full min-h-[140px] sm:min-h-[160px] md:min-h-[180px]"
+        className="grid grid-cols-1 gap-1.5 sm:gap-2 md:gap-3 h-full min-h-[140px] sm:min-h-[160px] md:min-h-[180px]"
       >
         {quadrants.map((quadrant, index) => (
           <div
@@ -1170,56 +1170,61 @@ const Dashboard = () => {
               </div>
             </div>
           ) : (
-            <section className="grid grid-cols-1  gap-3 sm:gap-4 md:gap-4 lg:gap-8 animate-fade-in">
-
-              {/* Task Distribution Quadrant */}
-              <div className="grid md:grid-cols-3 gap-3 ">
+            <section className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-2 lg:gap-3 animate-fade-in">
               
+              {/* Left Column - Bigger Width (3/4) */}
+              <div className="lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6">
+                
+                {/* First Row: Pie Chart and Bar Chart */}
+                <div className="grid grid-cols-1 sm:grid-cols-2  gap-3 sm:gap-4 md:gap-2">
+                  {/* Task Completion Pie Chart */}
+                  <div className="sm:col-span-1 lg:col-span-1">
+                    <Card title="Task Completion Rate" className="h-full" delay={2}>
+                      <TaskCompletionPieChart data={pieData} />
+                      
+                    </Card>
+                  </div>
+                  <div className="sm:col-span-1 lg:col-span-2 w-full ">
+                    <Card title="Task Due Date Trend" className="h-full" delay={3}>
+                      <TaskTrendAreaChart data={tasks} isDarkMode={isDarkMode} />
+                    </Card>
+                  </div>
 
-              
-              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
-                <DailyTaskLoadRange tasks={tasks} />
+                  {/* Daily Task Bar Chart */}
+                  <div className="sm:col-span-2 lg:col-span-3">
+                    <Card title="Daily Task Performance" className="h-full" delay={1}>
+                      <DailyTaskBarChart data={tasks} />
+                    </Card>
+                  </div>
+                </div>
+
+                {/* Second Row: Line Chart and Calendar */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                  {/* Task Trend Area Chart */}
+                
+
+                  {/* Task Calendar */}
+                  <div className="sm:col-span-1 lg:col-span-2">
+                    <TaskCalendar tasks={tasks} />
+                  </div>
+                </div>
               </div>
 
-              
-              {/* Daily Task Bar Chart */}
-              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
-                <Card title="Daily Task Performance" className="h-full" delay={1}>
-                  <DailyTaskBarChart data={tasks} />
-                </Card>
+              {/* Right Column - Smaller Width (1/4) */}
+              <div className="lg:col-span-1 space-y-3 sm:space-y-4 md:space-y-6">
+                {/* Task Distribution Quadrant */}
+                <div className="w-full">
+                  <TaskDistributionQuadrant tasks={tasks} />
+                </div>
+
+                {/* Daily Task Load Range */}
+                <div className="w-full">
+                  <DailyTaskLoadRange tasks={tasks} />
+                </div>
               </div>
 
-              {/* Task Completion Pie Chart */}
-              <div className="sm:col-span-1 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
-                <Card title="Task Completion Rate" className="h-full" delay={2}>
-                  <TaskCompletionPieChart data={pieData} />
-                </Card>
-              </div>
-
-              </div>
-              {/* Daily Task Load Range */}
-
-
-              {/* Task Trend Area Chart */}
-              <div className="sm:grid-cols-3 lg:grid-cols-3">
-              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
-                <Card title="Task Due Date Trend" className="h-full" delay={3}>
-                  <TaskTrendAreaChart data={tasks} isDarkMode={isDarkMode} />
-                </Card>
-              </div>
-
-              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
-                <TaskDistributionQuadrant tasks={tasks} />
-              </div>
-
-              {/* Task Calendar */}
-              <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
-                <TaskCalendar tasks={tasks} />
-              </div>
-              </div>
-
-              {/* Projects Section - Now Shows Real User Tasks */}
-              <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3 2xl:col-span-3 w-full" >
+              {/* Full Width: Projects Section */}
+              <div className="lg:col-span-4 w-full">
                 <Card title="My Tasks" className="h-full" delay={4}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -1338,7 +1343,6 @@ const Dashboard = () => {
                   )}
                 </Card>
               </div>
-              
             </section>
           )}
 

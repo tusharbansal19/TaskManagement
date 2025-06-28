@@ -73,7 +73,7 @@ const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 transition-all duration-500 ease-in-out transform
+        className={`fixed inset-y-0 left-0 z-50 w-42 transition-all duration-500 ease-in-out transform
           md:translate-x-0 md:static md:flex md:flex-col
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           ${isDarkMode ? 'bg-gray-900 text-white shadow-2xl' : 'bg-white text-gray-900 shadow-2xl'}
@@ -81,7 +81,7 @@ const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
         `}
         aria-label="Sidebar navigation"
       >
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           <Link to="/" className="text-2xl font-bold text-blue-500 dark:text-blue-400 tracking-tight">TaskFlow</Link>
           <button
             onClick={toggleSidebar}
@@ -91,7 +91,7 @@ const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
             <X size={24} />
           </button>
         </div>
-        <nav className="flex-1 px-4 py-6 overflow-y-auto">
+        <nav className="flex-1 px-2 py-6 overflow-y-auto">
           <ul>
             {menuItems.map((item) => (
               <li key={item.text} className="mb-2">
@@ -110,7 +110,7 @@ const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
                 >
                   {({ isActive }) => (
                     <>
-                      <item.icon size={20} className={`mr-3 transition-colors duration-300 ${isActive ? 'text-white' : isDarkMode ? 'text-blue-400 group-hover:text-white' : 'text-blue-500 group-hover:text-blue-700'}`} />
+                      <item.icon size={20} className={`mr-1 transition-colors duration-300 ${isActive ? 'text-white' : isDarkMode ? 'text-blue-400 group-hover:text-white' : 'text-blue-500 group-hover:text-blue-700'}`} />
                       <span className="font-medium">{item.text}</span>
                     </>
                   )}
