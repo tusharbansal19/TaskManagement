@@ -65,8 +65,8 @@ const Sub = () => { // Renamed 'sub' to 'Sub' for React component naming convent
       try {
         const url =
           activeTab === "signup"
-            ? "http://localhost:5000/api/users/register"
-            : "http://localhost:5000/api/users/login";
+            ? "https://taskserver-v7qf.onrender.com/api/users/register"
+            : "https://taskserver-v7qf.onrender.com/api/users/login";
         
         // Prepare payload based on activeTab
         const payload = activeTab === "signup"

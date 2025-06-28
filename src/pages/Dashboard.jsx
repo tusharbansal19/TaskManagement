@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area,
-  PieChart, Pie, Cell, BarChart, Bar, Legend,
+  PieChart, Pie, Cell, BarChart, Bar, Legend, 
 } from 'recharts';
+
 import {
   Home, LayoutGrid, Folder, CheckSquare, Settings, Users, Search, Bell,
   Menu, X, PlusCircle, UserCircle, Sparkles, ChevronLeft, ChevronRight,
@@ -14,7 +15,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectTasks } from '../redux/selectFilteredTasks';
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 import 'dayjs/locale/en';
+
+// Extend dayjs with isBetween plugin
+dayjs.extend(isBetween);
+
 import { getAllTask } from '../redux/TaskDetails';
 import { useTheme } from '../ThemeContext';
 import Avatar from '../Components/Avatar';
@@ -126,7 +132,205 @@ const Button = ({ children, onClick, className = '', variant = 'primary', disabl
     </button>
   );
 };
+const TaskReview = ({ tasks }) => {
+  const { isDarkMode } = useTheme();
+  
+  const taskReviewData = useMemo(() => {
+    // Calculate overall completed and incomplete tasks based on 'status'
+    const totalCounts = tasks.reduce(
+      (acc, task) => {
+        if (task.status === 'completed') {
+          acc.completed += 1;
+        } else {
+          acc.incomplete += 1;
+        }
+        return acc;
+      },
+      { completed: 0, incomplete: 0 }
+    );
 
+    const totalTasks = totalCounts.completed + totalCounts.incomplete;
+    const completionRate = totalTasks > 0 ? Math.round((totalCounts.completed / totalTasks) * 100) : 0;
+
+    // Calculate weekly trends for the last 4 weeks
+    const weeklyData = [];
+    const today = dayjs();
+    
+    for (let i = 3; i >= 0; i--) {
+      const weekStart = today.subtract(i * 7, 'day').startOf('week');
+      const weekEnd = today.subtract(i * 7, 'day').endOf('week');
+      
+      const weekTasks = tasks.filter(task => {
+        // Handle cases where dueDate might be null, undefined, or invalid
+        if (!task.dueDate) return false;
+        
+        try {
+          const taskDate = dayjs(task.dueDate);
+          // Check if the date is valid
+          if (!taskDate.isValid()) return false;
+          
+          return taskDate.isBetween(weekStart, weekEnd, 'day', '[]');
+        } catch (error) {
+          console.warn('Invalid date format for task:', task.dueDate);
+          return false;
+        }
+      });
+      
+      const weekCompleted = weekTasks.filter(task => task.status === 'completed').length;
+      const weekIncomplete = weekTasks.filter(task => task.status !== 'completed').length;
+      
+      weeklyData.push({
+        week: `Week ${4 - i}`,
+        completed: weekCompleted,
+        incomplete: weekIncomplete,
+        total: weekCompleted + weekIncomplete,
+        completionRate: weekCompleted + weekIncomplete > 0 ? Math.round((weekCompleted / (weekCompleted + weekIncomplete)) * 100) : 0
+      });
+    }
+
+    // Calculate priority-based completion rates
+    const priorityStats = tasks.reduce((acc, task) => {
+      const priority = task.priority || 'low';
+      if (!acc[priority]) {
+        acc[priority] = { total: 0, completed: 0 };
+      }
+      acc[priority].total += 1;
+      if (task.status === 'completed') {
+        acc[priority].completed += 1;
+      }
+      return acc;
+    }, {});
+
+    // Calculate overdue tasks
+    const overdueTasks = tasks.filter(task => {
+      if (task.status === 'completed') return false;
+      if (!task.dueDate) return false;
+      
+      try {
+        const dueDate = dayjs(task.dueDate);
+        if (!dueDate.isValid()) return false;
+        return dueDate.isBefore(today, 'day');
+      } catch (error) {
+        console.warn('Invalid date format for overdue task:', task.dueDate);
+        return false;
+      }
+    }).length;
+
+    // Calculate upcoming tasks (due in next 7 days)
+    const upcomingTasks = tasks.filter(task => {
+      if (task.status === 'completed') return false;
+      if (!task.dueDate) return false;
+      
+      try {
+        const dueDate = dayjs(task.dueDate);
+        if (!dueDate.isValid()) return false;
+        return dueDate.isBetween(today, today.add(7, 'day'), 'day', '[]');
+      } catch (error) {
+        console.warn('Invalid date format for upcoming task:', task.dueDate);
+        return false;
+      }
+    }).length;
+
+    return {
+      totalCounts,
+      totalTasks,
+      completionRate,
+      weeklyData,
+      priorityStats,
+      overdueTasks,
+      upcomingTasks
+    };
+  }, [tasks]);
+
+  const { totalCounts, totalTasks, completionRate, weeklyData, priorityStats, overdueTasks, upcomingTasks } = taskReviewData;
+
+  return (
+    <Card title="Task Progress Overview" className="h-full">
+      <div className="space-y-4">
+        {/* Main Progress Bar */}
+        <div className="relative">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Overall Progress</span>
+            <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{completionRate}%</span>
+          </div>
+          
+          {/* Progress Bar */}
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 relative overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${completionRate}%` }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+            </div>
+          </div>
+          
+          {/* Progress Labels */}
+          <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
+            <span>0</span>
+            <span>50%</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        {/* Task Counts */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 border border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-green-600 dark:text-green-400 font-medium">Completed</p>
+                <p className="text-lg font-bold text-green-700 dark:text-green-300">{totalCounts.completed}</p>
+              </div>
+              <div className="w-8 h-8 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center">
+                <CheckSquare size={16} className="text-green-600 dark:text-green-400" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 border border-red-200 dark:border-red-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-red-600 dark:text-red-400 font-medium">Incomplete</p>
+                <p className="text-lg font-bold text-red-700 dark:text-red-300">{totalCounts.incomplete}</p>
+              </div>
+              <div className="w-8 h-8 bg-red-100 dark:bg-red-800 rounded-full flex items-center justify-center">
+                <Clock size={16} className="text-red-600 dark:text-red-400" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Weekly Trend Chart */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Weekly Progress</h4>
+          <div className="space-y-2">
+            {weeklyData.map((week, index) => (
+              <div key={week.week} className="space-y-1">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-600 dark:text-gray-400">{week.week}</span>
+                  <span className="font-medium text-gray-800 dark:text-gray-200">
+                    {week.completed}/{week.total} ({week.completionRate}%)
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: `${week.total > 0 ? (week.completed / week.total) * 100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Priority-based Completion */}
+       
+
+
+     
+      </div>
+    </Card>
+  );
+};
 const Modal = ({ isOpen, onClose, title, children }) => {
   const { isDarkMode } = useTheme();
   
@@ -851,7 +1055,7 @@ const Dashboard = () => {
         // Try to fetch user profile from API
         try {
           const response = await axios.post(
-            'http://localhost:5000/api/users/profile',
+            'https://taskserver-v7qf.onrender.com/api/users/profile',
             { token },
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -890,7 +1094,7 @@ const Dashboard = () => {
       try {
         setLoading(true);
         const response = await axios.post(
-          "http://localhost:5000/api/tasks/get",
+          "https://taskserver-v7qf.onrender.com/api/tasks/get",
           { token: localStorage.getItem("token") },
           { headers: { "Content-Type": "application/json" } }
         );
@@ -934,7 +1138,7 @@ const Dashboard = () => {
     const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
     const payload = { contents: chatHistory };
     const apiKey = ""; // Leave as empty string for Canvas
-    const apiUrl = `http://localhost:5000/api/tasks/get`;
+    const apiUrl = `https://taskserver-v7qf.onrender.com/api/tasks/get`;
 
     try {
       const response = await fetch(apiUrl, {
@@ -1200,15 +1404,21 @@ const Dashboard = () => {
                 </div>
 
                 {/* Second Row: Line Chart and Calendar */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-2 md:gap-2">
                   {/* Task Trend Area Chart */}
                 
 
                   {/* Task Calendar */}
-                  <div className="sm:col-span-1 lg:col-span-2">
+                  
+                  <div className="sm:col-span-1 lg:col-span-1">
                     <TaskCalendar tasks={tasks} />
                   </div>
+                  <div className="sm:col-span-1 lg:col-span-1">
+                    <TaskReview tasks={tasks} />
+                  </div>
                 </div>
+               
+
               </div>
 
               {/* Right Column - Smaller Width (1/4) */}
@@ -1364,5 +1574,144 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+// --- CSS Animations for Enhanced Visual Effects ---
+const styles = `
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes sparkle {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    50% { transform: scale(1) rotate(180deg); opacity: 1; }
+    100% { transform: scale(0) rotate(360deg); opacity: 0; }
+  }
+
+  @keyframes lightning {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes electric-pulse {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.05); }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+  }
+
+  .animate-pulse {
+    animation: pulse 2s infinite ease-in-out;
+  }
+
+  .animate-sparkle {
+    animation: sparkle 2s infinite ease-in-out;
+  }
+
+  .animate-lightning {
+    animation: lightning 1.5s infinite ease-in-out;
+  }
+
+  .animate-electric-pulse {
+    animation: electric-pulse 2s infinite ease-in-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .drop-shadow-lg {
+    filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  }
+
+  .drop-shadow-md {
+    filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
+  }
+`;
+
+// Inject styles into the document
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
 
 // --- Mock data from the original code (keep for reference) ---

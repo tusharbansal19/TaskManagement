@@ -695,7 +695,7 @@ const TaskManager = () => {
       setLoading(true);
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/tasks/get",
+          "https://taskserver-v7qf.onrender.com/api/tasks/get",
           { token: localStorage.getItem("token") },
           { headers: { "Content-Type": "application/json" } }
         );
@@ -725,7 +725,7 @@ const TaskManager = () => {
   const handleAddTask = async (task) => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/tasks/create", {
+      const response = await axios.post("https://taskserver-v7qf.onrender.com/api/tasks/create", {
         token: localStorage.getItem("token"),
         ...task, status: "incomplete", startingDate: new Date().toISOString()
       }, {
@@ -758,7 +758,7 @@ const TaskManager = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        "http://localhost:5000/api/tasks/update",
+        "https://taskserver-v7qf.onrender.com/api/tasks/update",
         {
           token: localStorage.getItem("token"),
           taskId: id,
@@ -794,7 +794,7 @@ const TaskManager = () => {
   const handleDeleteTask = async () => {
     setLoading(true);
     try {
-      const response = await axios.delete(`http://localhost:5000/api/tasks/delete`, {
+      const response = await axios.delete(`https://taskserver-v7qf.onrender.com/api/tasks/delete`, {
         headers: { "Content-Type": "application/json" },
         data: { token: localStorage.getItem("token"), taskId: taskToDelete }
       });
@@ -824,7 +824,7 @@ const TaskManager = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        "http://localhost:5000/api/tasks/toggle-completion",
+        "https://taskserver-v7qf.onrender.com/api/tasks/toggle-completion",
         { token: localStorage.getItem("token"), taskId: id },
         { headers: { "Content-Type": "application/json" } }
       );

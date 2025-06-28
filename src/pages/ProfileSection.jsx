@@ -98,7 +98,7 @@ const ProfileSection = () => {
         // Try to fetch user profile from API
         try {
           const response = await axios.post(
-            'http://localhost:5000/api/users/profile',
+            'https://taskserver-v7qf.onrender.com/api/users/profile',
             { token },
             { headers: { 'Content-Type': 'application/json' } }
           );
@@ -148,7 +148,7 @@ const ProfileSection = () => {
 
       // Update profile via API
       const response = await axios.put(
-        'http://localhost:5000/api/users/profile',
+        'https://taskserver-v7qf.onrender.com/api/users/profile',
         {
           token,
           username: editedProfile.name,
