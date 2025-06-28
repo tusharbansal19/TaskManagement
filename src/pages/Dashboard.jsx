@@ -799,6 +799,7 @@ const DailyTaskLoadRange = ({ tasks }) => {
 const Dashboard = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const dispatch = useDispatch();
+  
   const tasks = useSelector(selectTasks);
   const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(0);
