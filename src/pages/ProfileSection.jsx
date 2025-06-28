@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PageLoader from '../Components/PageLoader';
 
 // Reusable Button component (copied for self-containment)
 const Button = ({ children, onClick, className = '', variant = 'primary', disabled = false, icon: Icon = null }) => {
@@ -209,9 +210,15 @@ const ProfileSection = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-950 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
-        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <PageLoader 
+        isLoading={loading} 
+        loadingMessage="Loading Profile..."
+        dynamicMessages={[
+          'Fetching your profile...',
+          'Loading user data...',
+          'Almost ready...'
+        ]}
+      />
     );
   }
 

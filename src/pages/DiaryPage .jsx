@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import axios from "axios";
+import PageLoader from '../Components/PageLoader';
 
 const SelfDiary = () => {
   const [keyInput, setKeyInput] = useState("");
@@ -109,7 +110,15 @@ const SelfDiary = () => {
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="loader border-dotted border-4 border-red-500 rounded-full w-6 h-6 animate-spin mr-2"></div>
+                <PageLoader 
+                  isLoading={isLoading} 
+                  loadingMessage="Saving Entry..."
+                  dynamicMessages={[
+                    'Saving your thoughts...',
+                    'Processing entry...',
+                    'Almost done...'
+                  ]}
+                />
               ) : (
                 "Submit"
               )}

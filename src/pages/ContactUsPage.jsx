@@ -11,6 +11,7 @@ import {
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaPaperPlane } from "react-icons/fa";
 import { ClipLoader } from "react-spinners";
 import { useTheme } from '../ThemeContext';
+import PageLoader from '../Components/PageLoader';
 
 const ContactUsPage = () => {
   const dispatch = useDispatch();
@@ -134,7 +135,15 @@ const ContactUsPage = () => {
           className="w-full flex items-center justify-center p-3 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-indigo-600 hover:to-sky-500 text-white rounded-lg     font-extrabold "
         >
           {loading ? (
-            <ClipLoader size={20} color="#ffffff" />
+            <PageLoader 
+              isLoading={loading} 
+              loadingMessage="Sending Message..."
+              dynamicMessages={[
+                'Sending your message...',
+                'Processing request...',
+                'Almost done...'
+              ]}
+            />
           ) : (
             <>
               <FaPaperPlane className="mr-2" />

@@ -5,6 +5,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ClipLoader } from "react-spinners"; // Spinner loader component
+import PageLoader from '../Components/PageLoader';
 
 const CreatePostPage = () => {
   const [title, setTitle] = useState("");
@@ -168,7 +169,19 @@ const CreatePostPage = () => {
               className="bg-gradient-to-r from-purple-500 to-purple-400 text-white py-2 px-6 rounded-md hover:shadow-lg hover:scale-105 transition duration-300 flex items-center"
               disabled={loading}
             >
-              {loading ? <ClipLoader size={20} color="white" /> : "Create Post"}
+              {loading ? (
+                <PageLoader 
+                  isLoading={loading} 
+                  loadingMessage="Creating Post..."
+                  dynamicMessages={[
+                    'Creating your post...',
+                    'Processing content...',
+                    'Almost ready...'
+                  ]}
+                />
+              ) : (
+                "Create Post"
+              )}
             </button>
           </div>
         </form>

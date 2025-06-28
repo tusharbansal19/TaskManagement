@@ -8,6 +8,7 @@ import { getAllTask } from '../redux/TaskDetails'; // Assuming this path is corr
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from '../ThemeContext';
+import PageLoader from '../Components/PageLoader';
 
 const Sub = () => { // Renamed 'sub' to 'Sub' for React component naming convention
   const navigator = useNavigate();
@@ -204,10 +205,15 @@ const Sub = () => { // Renamed 'sub' to 'Sub' for React component naming convent
             disabled={isLoading} // Disable button when loading
           >
             {isLoading ? (
-              <div className="flex items-center justify-center">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Loading...
-              </div>
+              <PageLoader 
+                isLoading={isLoading} 
+                loadingMessage={activeTab === "signup" ? "Creating Account..." : "Signing In..."}
+                dynamicMessages={
+                  activeTab === "signup" 
+                    ? ['Creating your account...', 'Setting up profile...', 'Almost ready...']
+                    : ['Authenticating...', 'Verifying credentials...', 'Almost done...']
+                }
+              />
             ) : (
               activeTab === "signup" ? "Signup" : "Login"
             )}

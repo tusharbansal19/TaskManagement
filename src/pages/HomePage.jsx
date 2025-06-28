@@ -5,6 +5,7 @@ import Loader from '../Components/Loader';
 import PostCard from '../Components/PostCard ';
 import Footer from '../Components/Footer';
 import { useTheme } from '../ThemeContext';
+import PageLoader from '../Components/PageLoader';
 
 
 
@@ -148,9 +149,15 @@ const HomePage = () => {
         {/* Posts Display */}
         <div className="grid grid-cols-1 gap-10 pr-10 sm:pr-32">
           {loading || searching ? (
-            <div className="flex justify-center items-center h-64">
-              <div className={`animate-spin rounded-full h-32 w-32 border-t-4 ${isDarkMode ? 'border-blue-400' : 'border-red-500'}`}></div>
-            </div>
+            <PageLoader 
+              isLoading={loading || searching} 
+              loadingMessage={loading ? "Loading Posts..." : "Searching..."}
+              dynamicMessages={
+                loading 
+                  ? ['Fetching posts...', 'Loading content...', 'Almost ready...']
+                  : ['Searching posts...', 'Finding matches...', 'Almost done...']
+              }
+            />
           ) : filteredPosts.length > 0 ? (
             filteredPosts.map((post) => <PostCard key={post._id} post={post} />)
           ) : (

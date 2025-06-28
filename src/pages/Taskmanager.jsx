@@ -27,6 +27,7 @@ import { useAuth } from "../Auth/AuthProtectComponents";
 // Ensure 'react-icons/fa' is installed (npm install react-icons/fa)
 import { FaEdit, FaCheck, FaTrash, FaClock, FaCalendarAlt, FaEllipsisV } from "react-icons/fa";
 import { useTheme } from '../ThemeContext';
+import PageLoader from '../Components/PageLoader';
 
 // --- Reusable Button Component (for consistency) ---
 const Button = ({ children, onClick, className = '', variant = 'primary', disabled = false, icon: Icon = null }) => {
@@ -943,11 +944,18 @@ const TaskManager = () => {
   return (
     <div className={`container mx-auto p-4 min-h-screen mb-28 min-h-screen rounded-xl shadow-lg
       ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}`}>
-      {loading && (
-        <div className="w-full flex justify-center mt-4 h-full items-center fixed top-0 left-0 bg-black bg-opacity-30 z-[110]">
-          <div className="w-12 h-12 border-4 border-dotted border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      )}
+      
+      {/* PageLoader for loading state */}
+      <PageLoader 
+        isLoading={loading} 
+        loadingMessage="Loading Tasks..."
+        dynamicMessages={[
+          'Fetching your tasks...',
+          'Organizing data...',
+          'Almost ready...'
+        ]}
+      />
+      
       <ToastContainer theme={isDarkMode ? "dark" : "light"} />
 
       <TaskHeader
