@@ -30,17 +30,24 @@ import { useTheme } from '../ThemeContext';
 import PageLoader from '../Components/PageLoader';
 
 // --- Reusable Button Component (for consistency) ---
-const Button = ({ children, onClick, className = '', variant = 'primary', disabled = false, icon: Icon = null }) => {
-  const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center";
+const Button = ({ children, onClick, className = '', variant = 'primary', disabled = false, icon: Icon = null, type = 'button' }) => {
+  const baseStyle = "px-4 py-3 sm:py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center min-h-[44px] touch-manipulation";
   const variants = {
-    primary: "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-md hover:shadow-lg",
-    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600",
-    outline: "border border-gray-300 text-gray-800 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700",
-    ghost: "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
+    primary: "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-md hover:shadow-lg active:scale-95",
+    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 active:scale-95",
+    outline: "border border-gray-300 text-gray-800 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 active:scale-95",
+    ghost: "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 active:scale-95",
     link: "text-blue-600 hover:underline dark:text-blue-400",
+    danger: "bg-red-500 text-white hover:bg-red-600 active:scale-95",
+    success: "bg-green-500 text-white hover:bg-green-600 active:scale-95",
   };
   return (
-    <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={disabled}>
+    <button 
+      type={type}
+      onClick={onClick} 
+      className={`${baseStyle} ${variants[variant]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`} 
+      disabled={disabled}
+    >
       {Icon && <Icon size={18} className={children ? "mr-2" : ""} />}
       {children}
     </button>
@@ -52,13 +59,13 @@ const Modal = ({ isOpen, onClose, title, children, isDarkMode }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className={`rounded-xl shadow-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto transform scale-95 animate-scale-in
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4 animate-fade-in">
+      <div className={`rounded-xl shadow-lg p-4 sm:p-6 w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto transform scale-95 animate-scale-in
         ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}`}>
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-100">{title}</h3>
           <Button variant="ghost" onClick={onClose} className="text-gray-600 dark:text-gray-300">
-            <X size={24} />
+            <X size={20} className="sm:w-6 sm:h-6" />
           </Button>
         </div>
         <div className="text-gray-700 dark:text-gray-200">
@@ -152,159 +159,342 @@ const TaskCard = ({ task, setEditingTask, setModalOpen, handleToggleCompletion, 
   const mockProgress = task.status === 'completed' ? 100 : (task.status === 'incomplete' ? 50 : 20);
 
   return (
-    <div className={`relative flex items-center py-3 px-4 rounded-lg shadow-sm transition-all duration-300
-      ${isDarkMode ? 'bg-gray-700 text-gray-100 hover:bg-gray-600' : 'bg-white text-gray-900 hover:bg-gray-50'}`}>
-      {/* Checkbox (optional, based on image) */}
-      <input type="checkbox" className={`mr-4 h-5 w-5 rounded border-gray-300 ${isDarkMode ? 'bg-gray-600 border-gray-500' : 'text-blue-600'}`} />
+    <div className={`relative ${isDarkMode ? 'bg-gray-700 text-gray-100' : 'bg-white text-gray-900'} rounded-lg shadow-sm transition-all duration-300 hover:shadow-md`}>
+      {/* Mobile Layout */}
+      <div className="block md:hidden p-4">
+        {/* Mobile Header */}
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex items-center space-x-3 flex-1">
+            <input 
+              type="checkbox" 
+              className={`h-5 w-5 rounded border-gray-300 ${isDarkMode ? 'bg-gray-600 border-gray-500' : 'text-blue-600'}`} 
+            />
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-base line-clamp-2 leading-tight">{task.title}</h4>
+              <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">{task.description}</p>
+            </div>
+          </div>
+          
+          {/* Mobile Actions Dropdown */}
+          <div className="relative ml-2" ref={dropdownRef}>
+            <Button
+              variant="ghost"
+              onClick={() => setDropdownOpen(!isDropdownOpen)}
+              className={`p-2 min-h-[44px] w-12 h-12 rounded-lg transition-all duration-300
+                ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-600 hover:bg-gray-200'}`}
+            >
+              <FaEllipsisV size={16} />
+            </Button>
 
-      {/* Task Name */}
-      <div className="flex-1 min-w-[150px] mr-4">
-        <h4 className="font-medium text-lg line-clamp-1">{task.title}</h4>
-        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">{task.description}</p>
-      </div>
+            {isDropdownOpen && (
+              <div className={`absolute top-12 right-0 w-48 border rounded-xl shadow-xl z-[9999] overflow-hidden
+                ${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'}`}>
+                <div className="p-2 space-y-1">
+                  <Button
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setEditingTask(task);
+                      setModalOpen(true);
+                      setDropdownOpen(false);
+                    }}
+                    className={`w-full justify-start text-sm py-4 px-4 rounded-lg transition-all duration-200
+                      ${isDarkMode ? 'text-gray-200 hover:bg-blue-600/20 hover:text-white' : 'text-gray-700 hover:bg-blue-100/50 hover:text-blue-700'}`}
+                  >
+                    <FaEdit size={16} className="mr-3" />
+                    <span>Edit Task</span>
+                  </Button>
 
-      {/* Progress Bar */}
-      <div className="flex-1 min-w-[100px] max-w-[150px] mr-4 hidden md:block">
-        <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-600">
-          <div className={`h-2.5 rounded-full ${getProgressBarColor(task.status)}`} style={{ width: `${mockProgress}%` }}></div>
+                  <Button
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleToggleCompletion(task._id);
+                      setDropdownOpen(false);
+                    }}
+                    className={`w-full justify-start text-sm py-4 px-4 rounded-lg transition-all duration-200
+                      ${isDarkMode ? 'text-gray-200 hover:bg-green-600/20 hover:text-white' : 'text-gray-700 hover:bg-green-100/50 hover:text-green-700'}`}
+                  >
+                    <FaCheck size={16} className="mr-3" />
+                    <span>Mark Complete</span>
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setTaskToDelete(task._id);
+                      setDeleteModalOpen(true);
+                      setDropdownOpen(false);
+                    }}
+                    className={`w-full justify-start text-sm py-4 px-4 rounded-lg transition-all duration-200
+                      ${isDarkMode ? 'text-gray-200 hover:bg-red-600/20 hover:text-white' : 'text-gray-700 hover:bg-red-100/50 hover:text-red-700'}`}
+                  >
+                    <FaTrash size={16} className="mr-3" />
+                    <span>Delete Task</span>
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-        <span className={`ml-1 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{mockProgress}%</span>
+
+        {/* Mobile Details */}
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          {/* Progress */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} font-medium`}>Progress</span>
+              <span className="font-semibold">{mockProgress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-600">
+              <div className={`h-2.5 rounded-full ${getProgressBarColor(task.status)} transition-all duration-500`} style={{ width: `${mockProgress}%` }}></div>
+            </div>
+          </div>
+
+          {/* Status */}
+          <div className="space-y-2">
+            <span className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'} text-xs font-medium`}>Status</span>
+            <div>
+              <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusColorClass(task.status)}`}>
+                {getStatusText(task.status)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Time Info */}
+        <div className="flex items-center justify-between text-sm bg-gray-50 dark:bg-gray-600/30 rounded-lg p-3">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center">
+              <FaClock size={14} className={`mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+              <span className={`font-medium ${remainingTime === "Overdue" ? 'text-red-500' : ''}`}>
+                {remainingTime === "Overdue" ? "Overdue" : remainingTime}
+              </span>
+            </div>
+            <div className="flex items-center">
+              <FaCalendarAlt size={14} className={`mr-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+              <span className="font-medium">{new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Action Buttons - Direct Access */}
+        <div className="flex gap-2 mt-4">
+          <Button
+            variant="primary"
+            onClick={() => {
+              setEditingTask(task);
+              setModalOpen(true);
+            }}
+            className="flex-1 py-3 text-sm font-medium"
+          >
+            <FaEdit size={14} className="mr-2" />
+            Edit
+          </Button>
+          
+          <Button
+            variant="success"
+            onClick={() => handleToggleCompletion(task._id)}
+            className="flex-1 py-3 text-sm font-medium"
+          >
+            <FaCheck size={14} className="mr-2" />
+            Complete
+          </Button>
+          
+          <Button
+            variant="danger"
+            onClick={() => {
+              setTaskToDelete(task._id);
+              setDeleteModalOpen(true);
+            }}
+            className="flex-1 py-3 text-sm font-medium"
+          >
+            <FaTrash size={14} className="mr-2" />
+            Delete
+          </Button>
+        </div>
       </div>
 
-      {/* Time Remaining / Due Date */}
-      <div className="flex-1 min-w-[100px] mr-4 hidden lg:block">
-        <div className="flex items-center text-sm">
-          <FaClock size={14} className={`mr-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-          <span className={`${remainingTime === "Overdue" ? 'text-red-500 font-semibold' : ''}`}>
-            {remainingTime === "Overdue" ? "Overdue" : remainingTime}
+      {/* Desktop Layout */}
+      <div className="hidden md:flex items-center py-4 px-4">
+        {/* Checkbox */}
+        <input type="checkbox" className={`mr-4 h-5 w-5 rounded border-gray-300 ${isDarkMode ? 'bg-gray-600 border-gray-500' : 'text-blue-600'}`} />
+
+        {/* Task Name */}
+        <div className="flex-1 min-w-[150px] mr-4">
+          <h4 className="font-semibold text-lg line-clamp-1">{task.title}</h4>
+          <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">{task.description}</p>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="flex-1 min-w-[100px] max-w-[150px] mr-4 hidden lg:block">
+          <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-600">
+            <div className={`h-2.5 rounded-full ${getProgressBarColor(task.status)} transition-all duration-500`} style={{ width: `${mockProgress}%` }}></div>
+          </div>
+          <span className={`ml-1 text-xs font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{mockProgress}%</span>
+        </div>
+
+        {/* Time Remaining / Due Date */}
+        <div className="flex-1 min-w-[100px] mr-4 hidden xl:block">
+          <div className="flex items-center text-sm">
+            <FaClock size={14} className={`mr-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+            <span className={`${remainingTime === "Overdue" ? 'text-red-500 font-semibold' : ''}`}>
+              {remainingTime === "Overdue" ? "Overdue" : remainingTime}
+            </span>
+          </div>
+          <div className="flex items-center text-sm mt-1">
+            <FaCalendarAlt size={14} className={`mr-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
+            <span>{new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+          </div>
+        </div>
+
+        {/* Status Badge */}
+        <div className="flex-1 min-w-[80px] mr-4">
+          <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${getStatusColorClass(task.status)}`}>
+            {getStatusText(task.status)}
           </span>
         </div>
-        <div className="flex items-center text-sm mt-1">
-          <FaCalendarAlt size={14} className={`mr-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
-          <span>{new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-        </div>
-      </div>
 
-      {/* Status Badge */}
-      <div className="flex-1 min-w-[80px] mr-4">
-        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColorClass(task.status)}`}>
-          {getStatusText(task.status)}
-        </span>
-      </div>
+        {/* Dropdown Menu for Actions */}
+        <div className="relative ml-auto" ref={dropdownRef}>
+          <Button
+            variant="ghost"
+            onClick={() => setDropdownOpen(!isDropdownOpen)}
+            className={`p-2 min-h-[44px] w-12 h-12 rounded-lg transition-all duration-300
+              ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-600 hover:bg-gray-200'}`}
+          >
+            <FaEllipsisV size={16} />
+          </Button>
 
-      {/* Dropdown Menu for Actions */}
-      <div className="relative ml-auto" ref={dropdownRef}>
-        <button
-          onClick={() => setDropdownOpen(!isDropdownOpen)}
-          className={`p-2 rounded-lg transition-all duration-300 hover:scale-110
-            ${isDarkMode ? 'text-gray-300 hover:bg-gray-600' : 'text-gray-600 hover:bg-gray-200'}`}
-          aria-label="Task actions"
-        >
-          <FaEllipsisV size={14} />
-        </button>
+          {isDropdownOpen && (
+            <div className={`absolute top-12 right-0 w-48 border rounded-xl shadow-xl z-[9999] overflow-hidden
+              ${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'}`}>
+              <div className="p-2 space-y-1">
+                <Button
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setEditingTask(task);
+                    setModalOpen(true);
+                    setDropdownOpen(false);
+                  }}
+                  className={`w-full justify-start text-sm py-4 px-4 rounded-lg transition-all duration-200
+                    ${isDarkMode ? 'text-gray-200 hover:bg-blue-600/20 hover:text-white' : 'text-gray-700 hover:bg-blue-100/50 hover:text-blue-700'}`}
+                  >
+                    <FaEdit size={16} className="mr-3" />
+                    <span>Edit Task</span>
+                  </Button>
 
-        <div className={`absolute top-8 right-0 w-40 border rounded-xl shadow-lg z-50 overflow-hidden transition-all duration-300
-          ${isDarkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'}
-          ${isDropdownOpen
-            ? 'opacity-100 translate-y-0 scale-100'
-            : 'opacity-0 translate-y-2 scale-95 pointer-events-none'
-          }`}>
-          <div className="p-1">
-            <button
-              onClick={() => {
-                setEditingTask(task);
-                setModalOpen(true);
-                setDropdownOpen(false);
-              }}
-              className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all duration-200
-                ${isDarkMode ? 'text-gray-200 hover:bg-blue-600/20 hover:text-white' : 'text-gray-700 hover:bg-blue-100/50 hover:text-blue-700'}`}
-            >
-              <FaEdit size={14} />
-              <span>Edit</span>
-            </button>
+                  <Button
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleToggleCompletion(task._id);
+                      setDropdownOpen(false);
+                    }}
+                    className={`w-full justify-start text-sm py-4 px-4 rounded-lg transition-all duration-200
+                      ${isDarkMode ? 'text-gray-200 hover:bg-green-600/20 hover:text-white' : 'text-gray-700 hover:bg-green-100/50 hover:text-green-700'}`}
+                  >
+                    <FaCheck size={16} className="mr-3" />
+                    <span>Mark Complete</span>
+                  </Button>
 
-            <button
-              onClick={() => {
-                handleToggleCompletion(task._id);
-                setDropdownOpen(false);
-              }}
-              className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all duration-200
-                ${isDarkMode ? 'text-gray-200 hover:bg-green-600/20 hover:text-white' : 'text-gray-700 hover:bg-green-100/50 hover:text-green-700'}`}
-            >
-              <FaCheck size={14} />
-              <span>Complete</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setTaskToDelete(task._id);
-                setDeleteModalOpen(true);
-                setDropdownOpen(false);
-              }}
-              className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all duration-200
-                ${isDarkMode ? 'text-gray-200 hover:bg-red-600/20 hover:text-white' : 'text-gray-700 hover:bg-red-100/50 hover:text-red-700'}`}
-            >
-              <FaTrash size={14} />
-              <span>Delete</span>
-            </button>
+                  <Button
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setTaskToDelete(task._id);
+                      setDeleteModalOpen(true);
+                      setDropdownOpen(false);
+                    }}
+                    className={`w-full justify-start text-sm py-4 px-4 rounded-lg transition-all duration-200
+                      ${isDarkMode ? 'text-gray-200 hover:bg-red-600/20 hover:text-white' : 'text-gray-700 hover:bg-red-100/50 hover:text-red-700'}`}
+                  >
+                    <FaTrash size={16} className="mr-3" />
+                    <span>Delete Task</span>
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 
 // --- TaskHeader Component ---
 const TaskHeader = ({ searchQuery, handleSearchChange, isDropdownOpen, filteredTasks, handleSelectTask, setModalOpen, setEditingTask, isDarkMode }) => (
-  <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-    <h1 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Task Manager</h1>
-    <div className="relative w-full md:w-1/2">
-      <input
-        type="text"
-        placeholder="Search tasks..."
-        value={searchQuery}
-        onChange={handleSearchChange}
-        className={`border p-2 rounded-lg w-full pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200
-          ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-gray-500'}`}
-      />
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+  <div className="flex flex-col space-y-4 mb-6">
+    {/* Title */}
+    <h1 className={`text-2xl sm:text-3xl font-bold text-center sm:text-left ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      Task Manager
+    </h1>
+    
+    {/* Search and Add Button Row */}
+    <div className="flex flex-col sm:flex-row gap-4">
+      {/* Search Input */}
+      <div className="relative flex-1">
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+          className={`border p-3 rounded-lg w-full pl-10 pr-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200
+            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100 placeholder-gray-400' : 'bg-gray-100 border-gray-300 text-gray-900 placeholder-gray-500'}`}
+        />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
 
-      {isDropdownOpen && searchQuery && (
-        <ul className={`absolute left-0 w-full mt-1 max-h-48 overflow-y-auto z-10 rounded-lg shadow-lg
-          ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}>
-          {filteredTasks.map((task) => (
-            <li
-              key={task._id}
-              className={`px-4 py-2 cursor-pointer transition-colors duration-150
-                ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-100'}`}
-              onClick={() => handleSelectTask(task.title)}
-            >
-              {task.title}
-            </li>
-          ))}
-        </ul>
-      )}
+        {isDropdownOpen && searchQuery && (
+          <ul className={`absolute left-0 w-full mt-1 max-h-48 overflow-y-auto z-10 rounded-lg shadow-lg border
+            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-white border-gray-300 text-gray-900'}`}>
+            {filteredTasks.map((task) => (
+              <li
+                key={task._id}
+                className={`px-4 py-3 cursor-pointer transition-colors duration-150 border-b last:border-b-0
+                  ${isDarkMode ? 'hover:bg-gray-600 border-gray-600' : 'hover:bg-gray-100 border-gray-200'}`}
+                onClick={() => handleSelectTask(task.title)}
+              >
+                <div className="font-medium">{task.title}</div>
+                <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {task.description.substring(0, 50)}...
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      
+      {/* Add Button */}
+      <Button
+        className="w-full sm:w-auto py-3 text-lg group whitespace-nowrap"
+        onClick={() => {
+          setEditingTask(null);
+          setModalOpen(true);
+        }}
+        icon={PlusCircle}
+      >
+        <span className="hidden sm:inline">Add New Task</span>
+        <span className="sm:hidden">Add Task</span>
+      </Button>
     </div>
-    <Button
-      className="w-full md:w-auto mt-4 md:mt-0 py-3 text-lg group"
-      onClick={() => {
-        setEditingTask(null);
-        setModalOpen(true);
-      }}
-      icon={PlusCircle}
-    >
-      Add New Task
-    </Button>
   </div>
 );
 
 // --- TaskFilterHeader Component ---
 const TaskFilterHeader = ({ setFilter, filter, isDarkMode }) => (
-  <div className={`flex justify-around items-center mb-6 p-2 rounded-lg shadow-inner
+  <div className={`flex flex-col sm:flex-row justify-around items-center mb-6 p-3 rounded-lg shadow-inner gap-2
     ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
     <Button
       variant="ghost"
-      className={`flex-1 mx-1 py-2 text-base font-semibold rounded-md transition-all duration-300
+      className={`w-full sm:flex-1 py-3 sm:py-2 text-sm sm:text-base font-semibold rounded-md transition-all duration-300
         ${filter === 'all' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600'}`}
       onClick={() => setFilter('all')}
     >
@@ -312,7 +502,7 @@ const TaskFilterHeader = ({ setFilter, filter, isDarkMode }) => (
     </Button>
     <Button
       variant="ghost"
-      className={`flex-1 mx-1 py-2 text-base font-semibold rounded-md transition-all duration-300
+      className={`w-full sm:flex-1 py-3 sm:py-2 text-sm sm:text-base font-semibold rounded-md transition-all duration-300
         ${filter === 'completed' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600'}`}
       onClick={() => setFilter('completed')}
     >
@@ -320,7 +510,7 @@ const TaskFilterHeader = ({ setFilter, filter, isDarkMode }) => (
     </Button>
     <Button
       variant="ghost"
-      className={`flex-1 mx-1 py-2 text-base font-semibold rounded-md transition-all duration-300
+      className={`w-full sm:flex-1 py-3 sm:py-2 text-sm sm:text-base font-semibold rounded-md transition-all duration-300
         ${filter === 'incomplete' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600'}`}
       onClick={() => setFilter('incomplete')}
     >
@@ -348,7 +538,7 @@ const TaskList = ({ filteredTasks, setEditingTask, setModalOpen, handleToggleCom
       </span>
     </div>
 
-    <div className="w-full overflow-x-auto"> {/* Added overflow-x-auto for responsiveness */}
+    <div className="w-full">
       {filteredTasks.length === 0 ? (
         <div className={`flex justify-center items-center w-full h-40 rounded-md mt-8
           ${isDarkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'}`}>
@@ -357,20 +547,29 @@ const TaskList = ({ filteredTasks, setEditingTask, setModalOpen, handleToggleCom
           </p>
         </div>
       ) : (
-        <div className={`min-w-[700px] ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md`}> {/* Minimum width for table-like layout */}
-          {/* Table Header */}
-          <div className={`flex items-center py-3 px-4 font-semibold text-sm uppercase border-b
+        <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md overflow-hidden`}>
+          {/* Desktop Table Header */}
+          <div className={`hidden md:flex items-center py-3 px-4 font-semibold text-sm uppercase border-b
             ${isDarkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'bg-gray-100 text-gray-600 border-gray-200'}`}>
             <div className="w-5 h-5 mr-4"></div> {/* Placeholder for checkbox */}
             <div className="flex-1 min-w-[150px] mr-4">Task Name</div>
-            <div className="flex-1 min-w-[100px] max-w-[150px] mr-4 hidden md:block">Progress</div>
-            <div className="flex-1 min-w-[100px] mr-4 hidden lg:block">Time / Due Date</div>
+            <div className="flex-1 min-w-[100px] max-w-[150px] mr-4 hidden lg:block">Progress</div>
+            <div className="flex-1 min-w-[100px] mr-4 hidden xl:block">Time / Due Date</div>
             <div className="flex-1 min-w-[80px] mr-4">Status</div>
             <div className="w-10 ml-auto">Actions</div> {/* Placeholder for dropdown */}
           </div>
 
+          {/* Mobile Header */}
+          <div className={`md:hidden px-4 py-3 font-semibold text-sm uppercase border-b
+            ${isDarkMode ? 'bg-gray-700 text-gray-300 border-gray-600' : 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+            <div className="flex items-center justify-between">
+              <span>Tasks ({filteredTasks.length})</span>
+              <span className="text-xs font-normal">Tap for actions</span>
+            </div>
+          </div>
+
           {/* Task List Items */}
-          <div className="divide-y divide-gray-200 dark:divide-gray-600 h-full gap-y-4 min-h-[500px] flex flex-col mt-2">
+          <div className="divide-y divide-gray-200 dark:divide-gray-600">
             {filteredTasks.map((task) => (
               <TaskCard
                 key={task._id}
@@ -390,10 +589,6 @@ const TaskList = ({ filteredTasks, setEditingTask, setModalOpen, handleToggleCom
   </div>
 );
 
-
-import dayjs from 'dayjs'; // Ensure dayjs is imported for date handling
-
-// Reusable Button component (assuming it's defined elsewhere or in the same file)
 
 
 
@@ -419,7 +614,7 @@ const TaskFormModal = ({ isOpen, onClose, title, editingTask, handleAddTask, han
       className="space-y-6" // Added space between form elements
     >
       {/* Title Input */}
-      <div className="relative flex items-center group">
+      <div className="relative group">
         <label htmlFor="title" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
           ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
           peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
@@ -439,37 +634,32 @@ const TaskFormModal = ({ isOpen, onClose, title, editingTask, handleAddTask, han
           placeholder=" " // Important for the label animation
           required
         />
-        <button
-          type="button"
-          className={`
-            ml-3 p-3 rounded-full text-white transition-colors duration-300 transform hover:scale-110 active:scale-95 shadow-md
-            ${isListening ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500' : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'}
-            focus:outline-none focus:ring-2 focus:ring-offset-2
-          `}
-          onClick={toggleListening}
-          tabIndex={-1}
-          aria-label="Start/Stop Speech to Text"
-        >
-          {isListening ? <Mic size={20} /> : <MicOff size={20} />}
-        </button>
-        <select
-          className={`
-            ml-3 p-3 rounded-xl border-2 focus:outline-none focus:ring-3 focus:ring-blue-500 transition-all duration-300
-            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}
-            shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
-          `}
-          value={speechLang}
-          onChange={e => setSpeechLang(e.target.value)}
-          style={{ minWidth: 100 }}
-          aria-label="Select language for speech to text"
-        >
-          <option value="en-US">English</option>
-          <option value="hi-IN">हिन्दी</option>
-        </select>
+        <div className="flex flex-col sm:flex-row gap-2 mt-2">
+          <Button
+            variant={isListening ? "danger" : "primary"}
+            onClick={toggleListening}
+            className="p-3 sm:p-2 min-h-[44px] rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md"
+          >
+            {isListening ? <Mic size={18} /> : <MicOff size={18} />}
+          </Button>
+          <select
+            className={`
+              p-3 sm:p-2 rounded-xl border-2 focus:outline-none focus:ring-3 focus:ring-blue-500 transition-all duration-300 text-sm min-h-[44px]
+              ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}
+              shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
+            `}
+            value={speechLang}
+            onChange={e => setSpeechLang(e.target.value)}
+            aria-label="Select language for speech to text"
+          >
+            <option value="en-US">English</option>
+            <option value="hi-IN">हिन्दी</option>
+          </select>
+        </div>
       </div>
 
       {/* Description Input */}
-      <div className="relative flex items-center group">
+      <div className="relative group">
         <label htmlFor="description" className={`absolute -top-3 left-3 px-1 text-xs font-semibold transition-all duration-200
           ${isDarkMode ? 'bg-gray-900 text-gray-400 group-focus-within:text-blue-400' : 'bg-white text-gray-500 group-focus-within:text-blue-600'}
           peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:bg-transparent
@@ -488,33 +678,28 @@ const TaskFormModal = ({ isOpen, onClose, title, editingTask, handleAddTask, han
           placeholder=" " // Important for the label animation
           required
         />
-        <button
-          type="button"
-          className={`
-            ml-3 self-start mt-3 p-3 rounded-full text-white transition-colors duration-300 transform hover:scale-110 active:scale-95 shadow-md
-            ${isDescListening ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500' : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'}
-            focus:outline-none focus:ring-2 focus:ring-offset-2
-          `}
-          onClick={toggleDescListening}
-          tabIndex={-1}
-          aria-label="Start/Stop Speech to Text for Description"
-        >
-          {isDescListening ? <Mic size={20} /> : <MicOff size={20} />}
-        </button>
-        <select
-          className={`
-            ml-3 self-start mt-3 p-3 rounded-xl border-2 focus:outline-none focus:ring-3 focus:ring-blue-500 transition-all duration-300
-            ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}
-            shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
-          `}
-          value={descLang}
-          onChange={e => setDescLang(e.target.value)}
-          style={{ minWidth: 100 }}
-          aria-label="Select language for speech to text (description)"
-        >
-          <option value="en-US">English</option>
-          <option value="hi-IN">हिन्दी</option>
-        </select>
+        <div className="flex flex-col sm:flex-row gap-2 mt-2">
+          <Button
+            variant={isDescListening ? "danger" : "primary"}
+            onClick={toggleDescListening}
+            className="p-3 sm:p-2 min-h-[44px] rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md"
+          >
+            {isDescListening ? <Mic size={18} /> : <MicOff size={18} />}
+          </Button>
+          <select
+            className={`
+              p-3 sm:p-2 rounded-xl border-2 focus:outline-none focus:ring-3 focus:ring-blue-500 transition-all duration-300 text-sm min-h-[44px]
+              ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'bg-gray-100 border-gray-300 text-gray-900'}
+              shadow-sm hover:shadow-md dark:shadow-lg dark:hover:shadow-xl
+            `}
+            value={descLang}
+            onChange={e => setDescLang(e.target.value)}
+            aria-label="Select language for speech to text (description)"
+          >
+            <option value="en-US">English</option>
+            <option value="hi-IN">हिन्दी</option>
+          </select>
+        </div>
       </div>
 
       {/* Due Date Input */}
@@ -569,19 +754,19 @@ const TaskFormModal = ({ isOpen, onClose, title, editingTask, handleAddTask, han
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end gap-4 pt-4">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 pt-4">
         <Button
           type="button"
           variant="secondary"
           onClick={onClose}
-          className="hover:scale-105"
+          className="hover:scale-105 w-full sm:w-auto"
         >
           Cancel
         </Button>
         <Button
           type="submit"
           variant="primary"
-          className="hover:scale-105"
+          className="hover:scale-105 w-full sm:w-auto"
         >
           {editingTask ? "Save Changes" : "Add Task"}
         </Button>
@@ -594,20 +779,21 @@ const TaskFormModal = ({ isOpen, onClose, title, editingTask, handleAddTask, han
 // --- DeleteConfirmationModal Component ---
 const DeleteConfirmationModal = ({ isOpen, onClose, handleDeleteTask, isDarkMode }) => (
   <Modal isOpen={isOpen} onClose={onClose} title="Confirm Deletion" isDarkMode={isDarkMode}>
-    <p className="mb-4">Are you sure you want to delete this task? This action cannot be undone.</p>
-    <div className="flex justify-end gap-2">
+    <p className="mb-6 text-gray-700 dark:text-gray-200">Are you sure you want to delete this task? This action cannot be undone.</p>
+    <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
       <Button
         variant="secondary"
         onClick={onClose}
+        className="w-full sm:w-auto"
       >
         Cancel
       </Button>
       <Button
-        variant="primary"
-        className="bg-red-600 hover:bg-red-700"
+        variant="danger"
         onClick={handleDeleteTask}
+        className="w-full sm:w-auto"
       >
-        Delete
+        Delete Task
       </Button>
     </div>
   </Modal>
@@ -942,7 +1128,7 @@ const TaskManager = () => {
   };
 
   return (
-    <div className={`container mx-auto p-4 min-h-screen mb-28 min-h-screen rounded-xl shadow-lg
+    <div className={`container mx-auto p-2 sm:p-4 min-h-screen mb-20 sm:mb-28 rounded-xl shadow-lg
       ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}`}>
       
       {/* PageLoader for loading state */}
