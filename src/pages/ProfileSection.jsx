@@ -7,6 +7,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PageLoader from '../Components/PageLoader';
+import Avatar from '../Components/Avatar';
 
 // Reusable Button component (copied for self-containment)
 const Button = ({ children, onClick, className = '', variant = 'primary', disabled = false, icon: Icon = null }) => {
@@ -244,10 +245,10 @@ const ProfileSection = () => {
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left mb-8">
           <div className="relative mb-6 md:mb-0 md:mr-8 group">
-            <img
-              src={profile.avatar}
-              alt="Profile Avatar"
-              className="w-32 h-32 rounded-full object-cover border-4 border-blue-500 dark:border-blue-400 shadow-lg
+            <Avatar
+              user={profile}
+              size="3xl"
+              className="border-4 border-blue-500 dark:border-blue-400 shadow-lg
                 transition-all duration-300 transform group-hover:scale-105 group-hover:rotate-3"
             />
             <div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-20 flex items-center justify-center transition-all duration-300">
@@ -316,10 +317,10 @@ const ProfileSection = () => {
           {/* Avatar Upload */}
           <div className="flex flex-col items-center mb-6">
             <div className="relative w-24 h-24 rounded-full group cursor-pointer overflow-hidden">
-              <img
-                src={editedProfile.avatar}
-                alt="Avatar Preview"
-                className="w-full h-full object-cover rounded-full border-2 border-blue-400"
+              <Avatar
+                user={editedProfile}
+                size="2xl"
+                className="border-2 border-blue-400"
               />
               <input
                 type="file"

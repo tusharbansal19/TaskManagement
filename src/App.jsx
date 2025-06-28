@@ -105,6 +105,7 @@ function App() {
                   </MainLayout>
                 </ProtectedRoute>
               } />
+              
               {/* Catch-all route for 404 Not Found pages */}
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

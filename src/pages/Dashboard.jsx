@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/en';
 import { getAllTask } from '../redux/TaskDetails';
 import { useTheme } from '../ThemeContext';
+import Avatar from '../Components/Avatar';
 
 // --- Enhanced Reusable Components ---
 
@@ -977,10 +978,10 @@ const Dashboard = () => {
                   Overview
                 </h2>
                 <div className="flex items-center space-x-2.5">
-                  <img
-                    src={userProfile.avatar}
-                    alt="User Avatar"
-                    className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full object-cover border-2 border-blue-500 dark:border-blue-400 shadow-lg"
+                  <Avatar
+                    user={userProfile}
+                    size="md"
+                    className="border-2 border-blue-500 dark:border-blue-400 shadow-lg"
                   />
                   <div>
                     <p className="text-xs sm:text-sm md:text-base text-gray-500 dark:text-gray-400 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
@@ -1169,9 +1170,11 @@ const Dashboard = () => {
               </div>
             </div>
           ) : (
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-8 animate-fade-in">
+            <section className="grid grid-cols-1  gap-3 sm:gap-4 md:gap-4 lg:gap-8 animate-fade-in">
 
               {/* Task Distribution Quadrant */}
+              <div className="grid md:grid-cols-3 gap-3 ">
+              
 
               
               <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
@@ -1193,10 +1196,12 @@ const Dashboard = () => {
                 </Card>
               </div>
 
+              </div>
               {/* Daily Task Load Range */}
 
 
               {/* Task Trend Area Chart */}
+              <div className="sm:grid-cols-3 lg:grid-cols-3">
               <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2 2xl:col-span-2">
                 <Card title="Task Due Date Trend" className="h-full" delay={3}>
                   <TaskTrendAreaChart data={tasks} isDarkMode={isDarkMode} />
@@ -1210,6 +1215,7 @@ const Dashboard = () => {
               {/* Task Calendar */}
               <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 2xl:col-span-1">
                 <TaskCalendar tasks={tasks} />
+              </div>
               </div>
 
               {/* Projects Section - Now Shows Real User Tasks */}

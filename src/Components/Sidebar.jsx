@@ -5,6 +5,7 @@ import { useAuth } from "../Auth/AuthProtectComponents";
 import { useTheme } from '../ThemeContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Avatar from './Avatar';
 
 const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const { logout } = useAuth();
@@ -142,10 +143,10 @@ const TSidebar = ({ isSidebarOpen, toggleSidebar }) => {
         {/* User profile */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-800">
           <div className="flex items-center">
-            <img 
-              src={userData.avatar} 
-              alt="User Avatar" 
-              className="w-10 h-10 rounded-full mr-3 border-2 border-blue-500 dark:border-blue-400"
+            <Avatar 
+              size="md"
+              className="mr-3"
+              showTooltip={true}
             />
             <div className="flex-1 min-w-0">
               <p className="font-medium text-gray-900 dark:text-white truncate">{userData.name}</p>

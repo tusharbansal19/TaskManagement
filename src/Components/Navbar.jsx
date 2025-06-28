@@ -3,6 +3,7 @@ import { Link, useNavigate, NavLink } from "react-router-dom";
 import { useAuth } from "../Auth/AuthProtectComponents"; // Assuming this path is correct
 import { Menu, X, Sun, Moon, LogOut, UserCircle } from 'lucide-react';
 import { useTheme } from '../ThemeContext'; // Assuming this path is correct
+import Avatar from './Avatar';
 
 const HIGHLIGHT_RECT_WIDTH = 120; // Slightly wider for better visual effect
 const HIGHLIGHT_RECT_HEIGHT = 44; // Slightly taller for better coverage
@@ -244,23 +245,28 @@ const Navbar = ({ toggleSidebar }) => {
 
           {/* Profile Image and Dropdown (Desktop) */}
           <div className="relative ml-4" ref={dropdownRef}>
-            <img
-              src="https://placehold.co/40x40/8B5CF6/FFFFFF?text=JD"
-              alt="User Avatar"
-              className="w-10 h-10 rounded-full cursor-pointer border-2 border-transparent hover:border-blue-400 transition-all duration-300 transform hover:scale-110 active:scale-95"
+            <Avatar
+              size="md"
               onClick={() => setDropdownOpen((prev) => !prev)}
+              showTooltip={true}
+              className="cursor-pointer"
             />
             {dropdownOpen && (
               <div
                 className={`absolute top-12 right-0 w-48 rounded-xl shadow-xl p-3 transition-all duration-300 transform origin-top-right animate-scale-in
                   ${isDarkMode ? 'bg-gray-800/95 backdrop-blur-md text-gray-100 border border-gray-700/50' : 'bg-white/95 backdrop-blur-md text-gray-900 border border-gray-200/50'}`}
               >
-                <p className={`font-bold mb-1 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                  {localStorage.getItem("username") || "Guest User"}
-                </p>
-                <p className={`text-xs mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                  {localStorage.getItem("email") || "guest@example.com"}
-                </p>
+                <div className="flex items-center mb-3">
+                  <Avatar size="sm" className="mr-3" />
+                  <div>
+                    <p className={`font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                      {localStorage.getItem("username") || localStorage.getItem("email")?.split('@')[0] || "Guest User"}
+                    </p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {localStorage.getItem("email") || "guest@example.com"}
+                    </p>
+                  </div>
+                </div>
                 <button
                   onClick={handleLogout}
                   className={`w-full flex items-center justify-center px-3 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95
