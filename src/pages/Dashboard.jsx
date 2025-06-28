@@ -24,6 +24,7 @@ const Card = ({ title, children, className = '', headerContent = null, delay = 0
   const { isDarkMode } = useTheme();
   const cardRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -45,7 +46,9 @@ const Card = ({ title, children, className = '', headerContent = null, delay = 0
   return (
     <div 
       ref={cardRef}
-      className={`rounded-xl sm:rounded-2xl shadow-lg border transition-all duration-700 hover:shadow-xl transform ${
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`rounded-xl sm:rounded-2xl shadow-lg border transition-all duration-700 hover:shadow-xl transform relative overflow-hidden ${
         isVisible 
           ? 'opacity-100 translate-y-0 scale-100' 
           : 'opacity-0 translate-y-8 scale-95'
@@ -54,8 +57,39 @@ const Card = ({ title, children, className = '', headerContent = null, delay = 0
           ? 'bg-gray-800/95 backdrop-blur-sm border-gray-700/50 text-gray-100 hover:bg-gray-800/98' 
           : 'bg-white/95 backdrop-blur-sm border-gray-200/50 text-gray-900 hover:bg-white/98'
       }`}
+      style={{
+        boxShadow: isHovered 
+          ? isDarkMode
+            ? '0 20px 40px rgba(59, 130, 246, 0.15), 0 0 20px rgba(147, 51, 234, 0.1), 0 0 40px rgba(59, 130, 246, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+            : '0 20px 40px rgba(59, 130, 246, 0.1), 0 0 20px rgba(147, 51, 234, 0.05), 0 0 40px rgba(59, 130, 246, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+          : isDarkMode
+            ? '0 10px 25px rgba(0, 0, 0, 0.3), 0 0 10px rgba(59, 130, 246, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
+            : '0 10px 25px rgba(0, 0, 0, 0.1), 0 0 10px rgba(59, 130, 246, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+      }}
     >
-      <div className={`p-2 sm:p-3 md:p-4 border-b ${
+      {/* Enhanced Lightning Effect Overlay */}
+      <div className={`absolute inset-0 rounded-xl sm:rounded-2xl pointer-events-none transition-opacity duration-500 ${
+        isHovered ? 'opacity-100' : 'opacity-0'
+      }`}>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400/10 to-transparent animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-400/5 to-transparent animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-400/30 to-transparent animate-lightning"></div>
+        <div className="absolute bottom-0 right-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-400/30 to-transparent animate-lightning" style={{ animationDelay: '0.5s' }}></div>
+        
+        {/* Sparkle effects */}
+        <div className="absolute top-2 left-2 w-2 h-2 bg-blue-400 rounded-full animate-sparkle" style={{ animationDelay: '0.2s' }}></div>
+        <div className="absolute top-4 right-4 w-1 h-1 bg-purple-400 rounded-full animate-sparkle" style={{ animationDelay: '0.8s' }}></div>
+        <div className="absolute bottom-2 left-4 w-1.5 h-1.5 bg-indigo-400 rounded-full animate-sparkle" style={{ animationDelay: '1.2s' }}></div>
+      </div>
+
+      {/* Enhanced Glowing Border Effect */}
+      <div className={`absolute inset-0 rounded-xl sm:rounded-2xl pointer-events-none transition-opacity duration-500 ${
+        isHovered ? 'opacity-100' : 'opacity-0'
+      }`}>
+        <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 blur-sm animate-electric-pulse"></div>
+      </div>
+
+      <div className={`p-2 sm:p-3 md:p-4 border-b relative z-10 ${
         isDarkMode ? 'border-gray-700/50' : 'border-gray-200/50'
       }`}>
         <div className="flex items-center justify-between">
@@ -65,7 +99,7 @@ const Card = ({ title, children, className = '', headerContent = null, delay = 0
           {headerContent && <div>{headerContent}</div>}
         </div>
       </div>
-      <div className="p-2 sm:p-3 md:p-4">
+      <div className="p-2 sm:p-3 md:p-4 relative z-10">
         {children}
       </div>
     </div>
@@ -126,53 +160,69 @@ const TaskCompletionPieChart = ({ data }) => {
   const COLORS = ['#10B981', '#EF4444']; // Green for completed, Red for incomplete
 
   return (
-    <ResponsiveContainer width="100%" height={150}>
-      <PieChart>
-        <Pie
-          data={pieData}
-          cx="50%"
-          cy="50%"
-          innerRadius={35}
-          outerRadius={60}
-          fill="#8884d8"
-          paddingAngle={2}
-          dataKey="value"
-          labelLine={false}
-          stroke="none"
-        >
-          {pieData.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={COLORS[index % COLORS.length]}
-              className="transition-all duration-500 transform hover:scale-110"
-            />
-          ))}
-        </Pie>
-        <Tooltip
-          formatter={(value, name) => [`${value} tasks`, name]}
-          contentStyle={{
-            borderRadius: '12px',
-            border: 'none',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(12px)',
-            color: '#333',
-            fontSize: '11px',
-            padding: '10px 14px'
-          }}
-          itemStyle={{ fontWeight: 'bold' }}
-        />
-        <Legend
-          verticalAlign="bottom"
-          height={25}
-          iconType="circle"
-          iconSize={6}
-          formatter={(value, entry) => (
-            <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">{value}</span>
-          )}
-        />
-      </PieChart>
-    </ResponsiveContainer>
+    <div className="relative group">
+      {/* Enhanced Lightning Effect for Chart */}
+      <div className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 via-emerald-400/5 to-green-400/10 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-red-400/5 via-rose-400/3 to-red-400/5 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+        
+        {/* Sparkle effects for pie chart */}
+        <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-green-400 rounded-full animate-sparkle" style={{ animationDelay: '0.3s' }}></div>
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-red-400 rounded-full animate-sparkle" style={{ animationDelay: '0.7s' }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-emerald-400 rounded-full animate-sparkle" style={{ animationDelay: '1.1s' }}></div>
+      </div>
+      
+      <ResponsiveContainer width="100%" height={150}>
+        <PieChart>
+          <Pie
+            data={pieData}
+            cx="50%"
+            cy="50%"
+            innerRadius={35}
+            outerRadius={60}
+            fill="#8884d8"
+            paddingAngle={2}
+            dataKey="value"
+            labelLine={false}
+            stroke="none"
+          >
+            {pieData.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+                className="transition-all duration-500 transform hover:scale-110 drop-shadow-lg"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))',
+                }}
+              />
+            ))}
+          </Pie>
+          <Tooltip
+            formatter={(value, name) => [`${value} tasks`, name]}
+            contentStyle={{
+              borderRadius: '12px',
+              border: 'none',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.15), 0 0 20px rgba(16, 185, 129, 0.1)',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(12px)',
+              color: '#333',
+              fontSize: '11px',
+              padding: '10px 14px'
+            }}
+            itemStyle={{ fontWeight: 'bold' }}
+          />
+          <Legend
+            verticalAlign="bottom"
+            height={25}
+            iconType="circle"
+            iconSize={6}
+            formatter={(value, entry) => (
+              <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">{value}</span>
+            )}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
@@ -203,34 +253,63 @@ const DailyTaskBarChart = ({ data }) => {
   }, [data]);
 
   return (
-    <ResponsiveContainer width="100%" height={180}>
-      <BarChart data={barData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
-        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-        <Tooltip
-          cursor={{ fill: 'rgba(0,0,0,0.1)' }}
-          contentStyle={{ 
-            borderRadius: '12px', 
-            border: 'none', 
-            boxShadow: '0 8px 32px rgba(0,0,0,0.15)', 
-            backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-            backdropFilter: 'blur(12px)', 
-            color: '#333',
-            fontSize: '11px',
-            padding: '12px 16px'
-          }}
-          itemStyle={{ fontWeight: 'bold' }}
-        />
-        <Legend 
-          iconType="circle" 
-          iconSize={6}
-          wrapperStyle={{ fontSize: '11px' }}
-        />
-        <Bar dataKey="Completed" fill="#10B981" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="Incomplete" fill="#EF4444" radius={[4, 4, 0, 0]} />
-      </BarChart>
-    </ResponsiveContainer>
+    <div className="relative group">
+      {/* Lightning Effect for Chart */}
+      <div className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 via-indigo-400/5 to-blue-400/10 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-400/5 via-violet-400/3 to-purple-400/5 animate-pulse" style={{ animationDelay: '0.7s' }}></div>
+        
+        {/* Sparkle effects for bar chart */}
+        <div className="absolute top-1/3 left-1/4 w-1 h-1 bg-blue-400 rounded-full animate-sparkle" style={{ animationDelay: '0.4s' }}></div>
+        <div className="absolute top-1/2 right-1/3 w-1 h-1 bg-indigo-400 rounded-full animate-sparkle" style={{ animationDelay: '0.9s' }}></div>
+        <div className="absolute bottom-1/3 left-1/2 w-1 h-1 bg-purple-400 rounded-full animate-sparkle" style={{ animationDelay: '1.3s' }}></div>
+      </div>
+      
+      <ResponsiveContainer width="100%" height={180}>
+        <BarChart data={barData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
+          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+          <Tooltip
+            cursor={{ fill: 'rgba(0,0,0,0.1)' }}
+            contentStyle={{ 
+              borderRadius: '12px', 
+              border: 'none', 
+              boxShadow: '0 8px 32px rgba(0,0,0,0.15), 0 0 20px rgba(59, 130, 246, 0.1)', 
+              backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+              backdropFilter: 'blur(12px)', 
+              color: '#333',
+              fontSize: '11px',
+              padding: '12px 16px'
+            }}
+            itemStyle={{ fontWeight: 'bold' }}
+          />
+          <Legend 
+            iconType="circle" 
+            iconSize={6}
+            wrapperStyle={{ fontSize: '11px' }}
+          />
+          <Bar 
+            dataKey="Completed" 
+            fill="#10B981" 
+            radius={[4, 4, 0, 0]}
+            className="drop-shadow-lg"
+            style={{
+              filter: 'drop-shadow(0 4px 8px rgba(16, 185, 129, 0.2))',
+            }}
+          />
+          <Bar 
+            dataKey="Incomplete" 
+            fill="#EF4444" 
+            radius={[4, 4, 0, 0]}
+            className="drop-shadow-lg"
+            style={{
+              filter: 'drop-shadow(0 4px 8px rgba(239, 68, 68, 0.2))',
+            }}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
@@ -256,43 +335,72 @@ const TaskTrendAreaChart = ({ data, isDarkMode }) => {
   }, [data]);
 
   return (
-    <ResponsiveContainer width="100%" height={180}>
-      <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#4a4a4a' : '#e0e0e0'} />
-        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-        <Tooltip
-          contentStyle={{
-            borderRadius: '8px',
-            border: 'none',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            backgroundColor: isDarkMode ? 'rgba(55, 65, 81, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(8px)',
-            color: isDarkMode ? '#e5e7eb' : '#333',
-            fontSize: '11px',
-            padding: '8px 12px'
-          }}
-          itemStyle={{ fontWeight: 'bold', color: isDarkMode ? '#e5e7eb' : '#555' }}
-          labelStyle={{ color: isDarkMode ? '#e5e7eb' : '#555' }}
-        />
-        <defs>
-          <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-            <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-          </linearGradient>
-        </defs>
-        <Area
-          type="monotone"
-          dataKey="count"
-          stroke="#8884d8"
-          fillOpacity={1}
-          fill="url(#colorCount)"
-          strokeWidth={2}
-          activeDot={{ r: 5, fill: '#8884d8', stroke: 'white', strokeWidth: 2 }}
-          className="transition-all duration-500 ease-in-out"
-        />
-      </AreaChart>
-    </ResponsiveContainer>
+    <div className="relative group">
+      {/* Lightning Effect for Chart */}
+      <div className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-400/10 via-violet-400/5 to-purple-400/10 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-indigo-400/5 via-blue-400/3 to-indigo-400/5 animate-pulse" style={{ animationDelay: '0.3s' }}></div>
+        
+        {/* Sparkle effects for area chart */}
+        <div className="absolute top-1/4 left-1/3 w-1 h-1 bg-purple-400 rounded-full animate-sparkle" style={{ animationDelay: '0.2s' }}></div>
+        <div className="absolute top-1/2 right-1/4 w-1 h-1 bg-violet-400 rounded-full animate-sparkle" style={{ animationDelay: '0.6s' }}></div>
+        <div className="absolute bottom-1/4 left-1/2 w-1 h-1 bg-indigo-400 rounded-full animate-sparkle" style={{ animationDelay: '1.0s' }}></div>
+      </div>
+      
+      <ResponsiveContainer width="100%" height={180}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#4a4a4a' : '#e0e0e0'} />
+          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+          <Tooltip
+            contentStyle={{
+              borderRadius: '8px',
+              border: 'none',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1), 0 0 20px rgba(139, 92, 246, 0.1)',
+              backgroundColor: isDarkMode ? 'rgba(55, 65, 81, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(8px)',
+              color: isDarkMode ? '#e5e7eb' : '#333',
+              fontSize: '11px',
+              padding: '8px 12px'
+            }}
+            itemStyle={{ fontWeight: 'bold', color: isDarkMode ? '#e5e7eb' : '#555' }}
+            labelStyle={{ color: isDarkMode ? '#e5e7eb' : '#555' }}
+          />
+          <defs>
+            <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge> 
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <Area
+            type="monotone"
+            dataKey="count"
+            stroke="#8884d8"
+            fillOpacity={1}
+            fill="url(#colorCount)"
+            strokeWidth={2}
+            activeDot={{ 
+              r: 5, 
+              fill: '#8884d8', 
+              stroke: 'white', 
+              strokeWidth: 2,
+              filter: 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3))'
+            }}
+            className="transition-all duration-500 ease-in-out"
+            style={{
+              filter: 'drop-shadow(0 4px 8px rgba(139, 92, 246, 0.2))',
+            }}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
@@ -525,7 +633,7 @@ const TaskDistributionQuadrant = ({ tasks }) => {
         {quadrants.map((quadrant, index) => (
           <div
             key={quadrant.title}
-            className={`flex flex-col items-center justify-center rounded-lg sm:rounded-xl md:rounded-2xl p-1.5 sm:p-2 md:p-3 transition-all duration-700 transform hover:scale-105 group cursor-pointer relative ${
+            className={`flex flex-col items-center justify-center rounded-lg sm:rounded-xl md:rounded-2xl p-1.5 sm:p-2 md:p-3 transition-all duration-700 transform hover:scale-105 group cursor-pointer relative overflow-hidden ${
               isVisible 
                 ? 'opacity-100 translate-y-0 scale-100' 
                 : 'opacity-0 translate-y-8 scale-95'
@@ -534,16 +642,31 @@ const TaskDistributionQuadrant = ({ tasks }) => {
             }`}
             style={{ 
               animationDelay: `${quadrant.delay * 100}ms`,
-              transitionDelay: `${quadrant.delay * 100}ms`
+              transitionDelay: `${quadrant.delay * 100}ms`,
+              boxShadow: `0 4px 12px ${quadrant.color.replace('bg-', '').replace('-500', '')}20, 0 0 8px ${quadrant.color.replace('bg-', '').replace('-500', '')}10`
             }}
           >
-            <div className={`p-1 sm:p-1.5 md:p-2 rounded-lg ${quadrant.color} bg-opacity-20 mb-1 sm:mb-1.5 md:mb-2 group-hover:scale-110 transition-transform duration-300`}>
+            {/* Lightning Effect for each quadrant */}
+            <div className="absolute inset-0 rounded-lg sm:rounded-xl md:rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-${quadrant.color.replace('bg-', '').replace('-500', '')}400/10 to-transparent animate-pulse`}></div>
+              <div className={`absolute inset-0 bg-gradient-to-b from-transparent via-${quadrant.color.replace('bg-', '').replace('-500', '')}400/5 to-transparent animate-pulse`} style={{ animationDelay: '0.5s' }}></div>
+            </div>
+
+            {/* Enhanced Glowing Border Effect */}
+            <div className="absolute inset-0 rounded-lg sm:rounded-xl md:rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className={`absolute inset-0 rounded-lg sm:rounded-xl md:rounded-2xl bg-gradient-to-r from-${quadrant.color.replace('bg-', '').replace('-500', '')}500/20 via-${quadrant.color.replace('bg-', '').replace('-500', '')}400/20 to-${quadrant.color.replace('bg-', '').replace('-500', '')}500/20 blur-sm`}></div>
+            </div>
+
+            <div className={`p-1 sm:p-1.5 md:p-2 rounded-lg ${quadrant.color} bg-opacity-20 mb-1 sm:mb-1.5 md:mb-2 group-hover:scale-110 transition-transform duration-300 relative z-10`}
+                 style={{
+                   boxShadow: `0 2px 8px ${quadrant.color.replace('bg-', '').replace('-500', '')}30, 0 0 4px ${quadrant.color.replace('bg-', '').replace('-500', '')}20`
+                 }}>
               <quadrant.icon 
                 size={7} 
                 className={`sm:w-4 sm:h-4 ${quadrant.textColor} ${quadrant.darkTextColor} group-hover:rotate-12 transition-transform duration-300`} 
               />
             </div>
-            <div className="text-center">
+            <div className="text-center relative z-10">
               <p className="text-sm sm:text-base md:text-sm font-bold text-gray-900 dark:text-gray-100 mb-0.5">
                 {quadrant.count}
               </p>
@@ -552,9 +675,10 @@ const TaskDistributionQuadrant = ({ tasks }) => {
               </p>
             </div>
             
-            {/* Animated progress ring */}
+            {/* Enhanced Animated progress ring */}
             <div className="absolute inset-0 rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className={`w-full h-full ${quadrant.color} bg-opacity-5 animate-pulse`}></div>
+              <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-${quadrant.color.replace('bg-', '').replace('-500', '')}400/10 to-transparent animate-pulse`} style={{ animationDelay: '1s' }}></div>
             </div>
           </div>
         ))}
@@ -606,36 +730,64 @@ const DailyTaskLoadRange = ({ tasks }) => {
 
   return (
     <Card title="Daily Task Load" className="h-full">
-      <ResponsiveContainer width="100%" height={140}>
-        <BarChart data={taskLoadData} layout="vertical" margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
-          <XAxis type="number" hide />
-          <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={50} tick={{ fontSize: 11 }} />
-          <Tooltip
-            formatter={(value, name) => [`${value} tasks`, 'Load']}
-            contentStyle={{ 
-              borderRadius: '8px', 
-              border: 'none', 
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)', 
-              backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-              backdropFilter: 'blur(8px)', 
-              color: '#333',
-              fontSize: '11px',
-              padding: '8px 12px'
-            }}
-            itemStyle={{ fontWeight: 'bold' }}
-          />
-          <Bar dataKey="tasks" barSize={12} radius={[0, 6, 6, 0]}>
-            {taskLoadData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} className="transition-all duration-300 hover:opacity-80" />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="relative group">
+        {/* Lightning Effect for Chart */}
+        <div className="absolute inset-0 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 via-emerald-400/5 to-green-400/10 animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-red-400/5 via-rose-400/3 to-red-400/5 animate-pulse" style={{ animationDelay: '0.6s' }}></div>
+          
+          {/* Sparkle effects for load range chart */}
+          <div className="absolute top-1/3 left-1/4 w-1 h-1 bg-green-400 rounded-full animate-sparkle" style={{ animationDelay: '0.3s' }}></div>
+          <div className="absolute top-1/2 right-1/3 w-1 h-1 bg-emerald-400 rounded-full animate-sparkle" style={{ animationDelay: '0.8s' }}></div>
+          <div className="absolute bottom-1/3 left-1/2 w-1 h-1 bg-red-400 rounded-full animate-sparkle" style={{ animationDelay: '1.2s' }}></div>
+        </div>
+        
+        <ResponsiveContainer width="100%" height={140}>
+          <BarChart data={taskLoadData} layout="vertical" margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
+            <XAxis type="number" hide />
+            <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={50} tick={{ fontSize: 11 }} />
+            <Tooltip
+              formatter={(value, name) => [`${value} tasks`, 'Load']}
+              contentStyle={{ 
+                borderRadius: '8px', 
+                border: 'none', 
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1), 0 0 20px rgba(34, 197, 94, 0.1)', 
+                backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                backdropFilter: 'blur(8px)', 
+                color: '#333',
+                fontSize: '11px',
+                padding: '8px 12px'
+              }}
+              itemStyle={{ fontWeight: 'bold' }}
+            />
+            <Bar 
+              dataKey="tasks" 
+              barSize={12} 
+              radius={[0, 6, 6, 0]}
+              className="drop-shadow-lg"
+              style={{
+                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))',
+              }}
+            >
+              {taskLoadData.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry.color} 
+                  className="transition-all duration-300 hover:opacity-80 drop-shadow-md"
+                  style={{
+                    filter: `drop-shadow(0 2px 4px ${entry.color}40)`,
+                  }}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
       <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1.5 px-2">
         <span>Low Load</span>
         <span>High Load</span>
       </div>
-      <div className="w-full h-1 rounded-full bg-gradient-to-r from-green-500 to-red-500 mt-1"></div>
+      <div className="w-full h-1 rounded-full bg-gradient-to-r from-green-500 to-red-500 mt-1 shadow-lg"></div>
     </Card>
   );
 };
@@ -1203,9 +1355,3 @@ const Dashboard = () => {
 export default Dashboard;
 
 // --- Mock data from the original code (keep for reference) ---
-const mockProjects = [
-  { id: 1, name: 'Landing/Page Design', status: 'In Progress', progress: 75, members: ['Alice', 'Bob'], dueDate: 'Jun 16, 2025' },
-  { id: 2, name: 'Website Redesign', status: 'Completed', progress: 100, members: ['Charlie', 'David'], dueDate: 'Jun 10, 2025' },
-  { id: 3, name: 'Mobile App UI/UX', status: 'Pending', progress: 30, members: ['Eve'], dueDate: 'Jul 20, 2025' },
-  { id: 4, name: 'Brand Identity', status: 'In Progress', progress: 60, members: ['Frank', 'Grace'], dueDate: 'Jul 05, 2025' },
-  { id: 5, name: 'Dashboard UI', status: 'In Progress', progress: 85, members: ['Heidi'], dueDate: 'Jun 28, 2025' },]
