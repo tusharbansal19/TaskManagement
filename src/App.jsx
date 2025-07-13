@@ -105,7 +105,7 @@ function App() {
                   </MainLayout>
                 </ProtectedRoute>
               } />
-               <Route path="/" element={
+                <Route path="/" element={
                 <ProtectedRoute>
                   <MainLayout>
                     <TaskManager />

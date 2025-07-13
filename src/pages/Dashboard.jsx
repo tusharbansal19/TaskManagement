@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area,
-  PieChart, Pie, Cell, BarChart, Bar, Legend, 
+  PieChart, Pie, Cell, BarChart, Bar, Legend,
 } from 'recharts';
 
 import {
@@ -377,56 +377,56 @@ const TaskCompletionPieChart = ({ data }) => {
         <div className="absolute bottom-1/4 left-1/3 w-1 h-1 bg-emerald-400 rounded-full animate-sparkle" style={{ animationDelay: '1.1s' }}></div>
       </div>
       
-      <ResponsiveContainer width="100%" height={150}>
-        <PieChart>
-          <Pie
-            data={pieData}
-            cx="50%"
-            cy="50%"
-            innerRadius={35}
-            outerRadius={60}
-            fill="#8884d8"
-            paddingAngle={2}
-            dataKey="value"
-            labelLine={false}
-            stroke="none"
-          >
-            {pieData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
+    <ResponsiveContainer width="100%" height={150}>
+      <PieChart>
+        <Pie
+          data={pieData}
+          cx="50%"
+          cy="50%"
+          innerRadius={35}
+          outerRadius={60}
+          fill="#8884d8"
+          paddingAngle={2}
+          dataKey="value"
+          labelLine={false}
+          stroke="none"
+        >
+          {pieData.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={COLORS[index % COLORS.length]}
                 className="transition-all duration-500 transform hover:scale-110 drop-shadow-lg"
                 style={{
                   filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))',
                 }}
-              />
-            ))}
-          </Pie>
-          <Tooltip
-            formatter={(value, name) => [`${value} tasks`, name]}
-            contentStyle={{
-              borderRadius: '12px',
-              border: 'none',
+            />
+          ))}
+        </Pie>
+        <Tooltip
+          formatter={(value, name) => [`${value} tasks`, name]}
+          contentStyle={{
+            borderRadius: '12px',
+            border: 'none',
               boxShadow: '0 8px 32px rgba(0,0,0,0.15), 0 0 20px rgba(16, 185, 129, 0.1)',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(12px)',
-              color: '#333',
-              fontSize: '11px',
-              padding: '10px 14px'
-            }}
-            itemStyle={{ fontWeight: 'bold' }}
-          />
-          <Legend
-            verticalAlign="bottom"
-            height={25}
-            iconType="circle"
-            iconSize={6}
-            formatter={(value, entry) => (
-              <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">{value}</span>
-            )}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(12px)',
+            color: '#333',
+            fontSize: '11px',
+            padding: '10px 14px'
+          }}
+          itemStyle={{ fontWeight: 'bold' }}
+        />
+        <Legend
+          verticalAlign="bottom"
+          height={25}
+          iconType="circle"
+          iconSize={6}
+          formatter={(value, entry) => (
+            <span className="text-xs text-gray-600 dark:text-gray-300 font-medium">{value}</span>
+          )}
+        />
+      </PieChart>
+    </ResponsiveContainer>
     </div>
   );
 };
@@ -470,30 +470,30 @@ const DailyTaskBarChart = ({ data }) => {
         <div className="absolute bottom-1/3 left-1/2 w-1 h-1 bg-purple-400 rounded-full animate-sparkle" style={{ animationDelay: '1.3s' }}></div>
       </div>
       
-      <ResponsiveContainer width="100%" height={180}>
-        <BarChart data={barData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
-          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-          <Tooltip
-            cursor={{ fill: 'rgba(0,0,0,0.1)' }}
-            contentStyle={{ 
-              borderRadius: '12px', 
-              border: 'none', 
+    <ResponsiveContainer width="100%" height={180}>
+      <BarChart data={barData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e0e0e0" />
+        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+        <Tooltip
+          cursor={{ fill: 'rgba(0,0,0,0.1)' }}
+          contentStyle={{ 
+            borderRadius: '12px', 
+            border: 'none', 
               boxShadow: '0 8px 32px rgba(0,0,0,0.15), 0 0 20px rgba(59, 130, 246, 0.1)', 
-              backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-              backdropFilter: 'blur(12px)', 
-              color: '#333',
-              fontSize: '11px',
-              padding: '12px 16px'
-            }}
-            itemStyle={{ fontWeight: 'bold' }}
-          />
-          <Legend 
-            iconType="circle" 
-            iconSize={6}
-            wrapperStyle={{ fontSize: '11px' }}
-          />
+            backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+            backdropFilter: 'blur(12px)', 
+            color: '#333',
+            fontSize: '11px',
+            padding: '12px 16px'
+          }}
+          itemStyle={{ fontWeight: 'bold' }}
+        />
+        <Legend 
+          iconType="circle" 
+          iconSize={6}
+          wrapperStyle={{ fontSize: '11px' }}
+        />
           <Bar 
             dataKey="Completed" 
             fill="#10B981" 
@@ -512,8 +512,8 @@ const DailyTaskBarChart = ({ data }) => {
               filter: 'drop-shadow(0 4px 8px rgba(239, 68, 68, 0.2))',
             }}
           />
-        </BarChart>
-      </ResponsiveContainer>
+      </BarChart>
+    </ResponsiveContainer>
     </div>
   );
 };
@@ -552,30 +552,30 @@ const TaskTrendAreaChart = ({ data, isDarkMode }) => {
         <div className="absolute bottom-1/4 left-1/2 w-1 h-1 bg-indigo-400 rounded-full animate-sparkle" style={{ animationDelay: '1.0s' }}></div>
       </div>
       
-      <ResponsiveContainer width="100%" height={180}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#4a4a4a' : '#e0e0e0'} />
-          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
-          <Tooltip
-            contentStyle={{
-              borderRadius: '8px',
-              border: 'none',
+    <ResponsiveContainer width="100%" height={180}>
+      <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? '#4a4a4a' : '#e0e0e0'} />
+        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} />
+        <Tooltip
+          contentStyle={{
+            borderRadius: '8px',
+            border: 'none',
               boxShadow: '0 4px 20px rgba(0,0,0,0.1), 0 0 20px rgba(139, 92, 246, 0.1)',
-              backgroundColor: isDarkMode ? 'rgba(55, 65, 81, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(8px)',
-              color: isDarkMode ? '#e5e7eb' : '#333',
-              fontSize: '11px',
-              padding: '8px 12px'
-            }}
-            itemStyle={{ fontWeight: 'bold', color: isDarkMode ? '#e5e7eb' : '#555' }}
-            labelStyle={{ color: isDarkMode ? '#e5e7eb' : '#555' }}
-          />
-          <defs>
-            <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-            </linearGradient>
+            backgroundColor: isDarkMode ? 'rgba(55, 65, 81, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(8px)',
+            color: isDarkMode ? '#e5e7eb' : '#333',
+            fontSize: '11px',
+            padding: '8px 12px'
+          }}
+          itemStyle={{ fontWeight: 'bold', color: isDarkMode ? '#e5e7eb' : '#555' }}
+          labelStyle={{ color: isDarkMode ? '#e5e7eb' : '#555' }}
+        />
+        <defs>
+          <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+            <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+          </linearGradient>
             <filter id="glow">
               <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
               <feMerge> 
@@ -583,14 +583,14 @@ const TaskTrendAreaChart = ({ data, isDarkMode }) => {
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
-          </defs>
-          <Area
-            type="monotone"
-            dataKey="count"
-            stroke="#8884d8"
-            fillOpacity={1}
-            fill="url(#colorCount)"
-            strokeWidth={2}
+        </defs>
+        <Area
+          type="monotone"
+          dataKey="count"
+          stroke="#8884d8"
+          fillOpacity={1}
+          fill="url(#colorCount)"
+          strokeWidth={2}
             activeDot={{ 
               r: 5, 
               fill: '#8884d8', 
@@ -598,13 +598,13 @@ const TaskTrendAreaChart = ({ data, isDarkMode }) => {
               strokeWidth: 2,
               filter: 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.3))'
             }}
-            className="transition-all duration-500 ease-in-out"
+          className="transition-all duration-500 ease-in-out"
             style={{
               filter: 'drop-shadow(0 4px 8px rgba(139, 92, 246, 0.2))',
             }}
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+        />
+      </AreaChart>
+    </ResponsiveContainer>
     </div>
   );
 };
@@ -947,24 +947,24 @@ const DailyTaskLoadRange = ({ tasks }) => {
           <div className="absolute bottom-1/3 left-1/2 w-1 h-1 bg-red-400 rounded-full animate-sparkle" style={{ animationDelay: '1.2s' }}></div>
         </div>
         
-        <ResponsiveContainer width="100%" height={140}>
-          <BarChart data={taskLoadData} layout="vertical" margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
-            <XAxis type="number" hide />
-            <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={50} tick={{ fontSize: 11 }} />
-            <Tooltip
-              formatter={(value, name) => [`${value} tasks`, 'Load']}
-              contentStyle={{ 
-                borderRadius: '8px', 
-                border: 'none', 
+      <ResponsiveContainer width="100%" height={140}>
+        <BarChart data={taskLoadData} layout="vertical" margin={{ top: 5, right: 20, left: 15, bottom: 5 }}>
+          <XAxis type="number" hide />
+          <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={50} tick={{ fontSize: 11 }} />
+          <Tooltip
+            formatter={(value, name) => [`${value} tasks`, 'Load']}
+            contentStyle={{ 
+              borderRadius: '8px', 
+              border: 'none', 
                 boxShadow: '0 4px 20px rgba(0,0,0,0.1), 0 0 20px rgba(34, 197, 94, 0.1)', 
-                backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                backdropFilter: 'blur(8px)', 
-                color: '#333',
-                fontSize: '11px',
-                padding: '8px 12px'
-              }}
-              itemStyle={{ fontWeight: 'bold' }}
-            />
+              backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+              backdropFilter: 'blur(8px)', 
+              color: '#333',
+              fontSize: '11px',
+              padding: '8px 12px'
+            }}
+            itemStyle={{ fontWeight: 'bold' }}
+          />
             <Bar 
               dataKey="tasks" 
               barSize={12} 
@@ -974,7 +974,7 @@ const DailyTaskLoadRange = ({ tasks }) => {
                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))',
               }}
             >
-              {taskLoadData.map((entry, index) => (
+            {taskLoadData.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
                   fill={entry.color} 
@@ -983,10 +983,10 @@ const DailyTaskLoadRange = ({ tasks }) => {
                     filter: `drop-shadow(0 2px 4px ${entry.color}40)`,
                   }}
                 />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
       </div>
       <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1.5 px-2">
         <span>Low Load</span>
@@ -1393,15 +1393,15 @@ const Dashboard = () => {
                     <Card title="Task Due Date Trend" className="h-full" delay={3}>
                       <TaskTrendAreaChart data={tasks} isDarkMode={isDarkMode} />
                     </Card>
-                  </div>
-
-                  {/* Daily Task Bar Chart */}
+              </div>
+              
+              {/* Daily Task Bar Chart */}
                   <div className="sm:col-span-2 lg:col-span-3">
-                    <Card title="Daily Task Performance" className="h-full" delay={1}>
-                      <DailyTaskBarChart data={tasks} />
-                    </Card>
-                  </div>
-                </div>
+                <Card title="Daily Task Performance" className="h-full" delay={1}>
+                  <DailyTaskBarChart data={tasks} />
+                </Card>
+              </div>
+              </div>
 
                 {/* Second Row: Line Chart and Calendar */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-2 md:gap-2">
@@ -1416,8 +1416,8 @@ const Dashboard = () => {
                   <div className="sm:col-span-1 lg:col-span-1">
                     <TaskReview tasks={tasks} />
                   </div>
-                </div>
-               
+              </div>
+
 
               </div>
 
@@ -1425,8 +1425,8 @@ const Dashboard = () => {
               <div className="lg:col-span-1 space-y-3 sm:space-y-4 md:space-y-6">
                 {/* Task Distribution Quadrant */}
                 <div className="w-full">
-                  <TaskDistributionQuadrant tasks={tasks} />
-                </div>
+                <TaskDistributionQuadrant tasks={tasks} />
+              </div>
 
                 {/* Daily Task Load Range */}
                 <div className="w-full">

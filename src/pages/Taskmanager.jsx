@@ -11,7 +11,7 @@ import { selectFilteredTasks } from "../redux/selectFilteredTasks";
 // import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 // --- TaskFormModal Component ---
 // import { Mic, MicOff, X } from 'lucide-react';
-import { Search, PlusCircle, Mic, MicOff, X, CalendarDays, ChevronDown } from 'lucide-react'; // Ensure 'lucide-react' is installed (npm install lucide-react)
+import { Search, PlusCircle, Mic, MicOff, X, CalendarDays, ChevronDown, ListChecks, CheckCircle2, CircleOff } from 'lucide-react'; // Add ListChecks, CheckCircle2, CircleOff for filter icons
 // Ensure 'react-simple-typewriter' is installed (npm install react-simple-typewriter)
 import { Typewriter } from "react-simple-typewriter";
 // Ensure 'react-toastify' is installed (npm install react-toastify)
@@ -399,9 +399,7 @@ const TaskHeader = ({
   return (
     <div className="flex flex-col space-y-4 mb-8 p-4">
       {/* Title */}
-      <h1 className={`text-3xl font-bold text-center sm:text-left ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-        Task Manager
-      </h1>
+     
       
       {/* Search Input with Integrated Icons */}
       <div className="relative flex-1 max-w-2xl mx-auto w-full">
@@ -482,54 +480,96 @@ const TaskHeader = ({
 };
 
 // --- TaskFilterHeader Component ---
-const TaskFilterHeader = ({ setFilter, filter, isDarkMode }) => (
-  <div className={`flex flex-col sm:flex-row justify-around items-center mb-6 p-3 rounded-lg shadow-inner gap-2
-    ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
-    <Button
-      variant="ghost"
-      className={`w-full sm:flex-1 py-3 sm:py-2 text-sm sm:text-base font-semibold rounded-md transition-all duration-300
-        ${filter === 'all' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600'}`}
-      onClick={() => setFilter('all')}
-    >
-      All Tasks
-    </Button>
-    <Button
-      variant="ghost"
-      className={`w-full sm:flex-1 py-3 sm:py-2 text-sm sm:text-base font-semibold rounded-md transition-all duration-300
-        ${filter === 'completed' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600'}`}
-      onClick={() => setFilter('completed')}
-    >
-      Completed
-    </Button>
-    <Button
-      variant="ghost"
-      className={`w-full sm:flex-1 py-3 sm:py-2 text-sm sm:text-base font-semibold rounded-md transition-all duration-300
-        ${filter === 'incomplete' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600'}`}
-      onClick={() => setFilter('incomplete')}
-    >
-      Incomplete
-    </Button>
-  </div>
-);
+const FILTERS = [
+  { key: 'all', icon: ListChecks, label: 'All', color: 'bg-blue-500 hover:bg-blue-600 text-white border-blue-400' },
+  { key: 'completed', icon: CheckCircle2, label: 'Completed', color: 'bg-green-500 hover:bg-green-600 text-white border-green-400' },
+  { key: 'incomplete', icon: CircleOff, label: 'Incomplete', color: 'bg-red-500 hover:bg-red-600 text-white border-red-400' },
+];
+
+const TaskFilterHeader = ({ setFilter, filter, isDarkMode }) => {
+  const [fabOpen, setFabOpen] = React.useState(false);
+  // Close dropdown on scroll or route change
+  React.useEffect(() => {
+    if (!fabOpen) return;
+    const close = () => setFabOpen(false);
+    window.addEventListener('scroll', close);
+    return () => window.removeEventListener('scroll', close);
+  }, [fabOpen]);
+
+  return (
+    <>
+      {/* Desktop/Tablet Tab View */}
+      <div className={`hidden sm:flex flex-row justify-center items-center mb-6 p-2 rounded-lg shadow-inner gap-2
+        ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+        {FILTERS.map(({ key, icon: Icon, label, color }) => (
+          <button
+            key={key}
+            onClick={() => setFilter(key)}
+            className={`flex flex-col items-center justify-center px-4 py-1.5 rounded-xl font-semibold transition-all duration-300 text-xs
+              ${filter === key
+                ? `${color} shadow-md scale-105`
+                : isDarkMode
+                  ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                  : 'text-gray-600 hover:bg-gray-200 hover:text-blue-700'}
+            `}
+            aria-label={label}
+            style={{ minWidth: 48 }}
+          >
+            <Icon size={18} className="mb-0.5" />
+            <span className="text-[10px] font-medium mt-0.5">{label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Mobile FAB + Dropdown */}
+      <div className="sm:hidden mb-6">
+        {/* Fixed FAB */}
+        <div className="fixed bottom-20 right-4 z-[99] flex flex-col items-end">
+          <div className={`relative transition-all duration-300 ${fabOpen ? 'mb-1' : ''}`}>
+            {/* Dropdown options */}
+            <div className={`flex flex-col items-center space-y-1 mb-1 transition-all duration-300
+              ${fabOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-2 pointer-events-none'}`}
+              style={{ minWidth: '40px' }}
+            >
+              {FILTERS.map(({ key, icon: Icon, label, color }) => (
+                <button
+                  key={key}
+                  onClick={() => { setFilter(key); setFabOpen(false); }}
+                  className={`w-10 h-10 flex items-center justify-center rounded-full shadow-lg border-2 transition-all duration-200 text-xs
+                    ${filter === key
+                      ? `${color} scale-110`
+                      : isDarkMode
+                        ? 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-blue-700 hover:text-white'
+                        : 'bg-white text-gray-700 border-gray-200 hover:bg-blue-100 hover:text-blue-700'}
+                  `}
+                  aria-label={label}
+                >
+                  <Icon size={16} />
+                </button>
+              ))}
+            </div>
+            {/* FAB Button */}
+            <button
+              onClick={() => setFabOpen((v) => !v)}
+              className={`w-12 h-12 rounded-full flex items-center justify-center shadow-2xl border-4 border-white dark:border-gray-900
+                bg-gradient-to-br from-blue-500 to-purple-600 text-white text-2xl transition-all duration-300
+                hover:scale-110 active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-400/30
+                ${fabOpen ? 'rotate-45' : ''}`}
+              aria-label="Show filters"
+            >
+              <PlusCircle size={22} className={`transition-transform duration-300 ${fabOpen ? 'rotate-45' : ''}`} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
 // --- TaskList Component (Removed Drag and Drop, Updated to list-like UI) ---
 const TaskList = ({ filteredTasks, setEditingTask, setModalOpen, handleToggleCompletion, setTaskToDelete, setDeleteModalOpen, isDarkMode, arrayOfTitle }) => (
   <div className="text-gray-800 dark:text-gray-100 font-extrabold my-3 text-base sm:text-lg">
-    <div className="flex items-center text-[20px] md:text-[35px] mb-4">
-      <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>| Task : </span>
-      <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
-        <Typewriter
-          words={arrayOfTitle.length > 0 ? arrayOfTitle : ["No tasks yet!"]}
-          loop={0} // Loop indefinitely
-          cursor
-          cursorStyle="|"
-          cursorColor={isDarkMode ? "#a78bfa" : "#8E44AD"} // Dynamic cursor color
-          typeSpeed={100}
-          deleteSpeed={50}
-          delaySpeed={2000}
-        />
-      </span>
-    </div>
+   
 
     <div className="w-full">
       {filteredTasks.length === 0 ? (
@@ -1189,16 +1229,7 @@ const TaskManager = () => {
         isDarkMode={isDarkMode}
       />
 
-      <TaskList
-        filteredTasks={filteredTasks}
-        setEditingTask={setEditingTask}
-        setModalOpen={setModalOpen}
-        handleToggleCompletion={handleToggleCompletion}
-        setTaskToDelete={setTaskToDelete}
-        setDeleteModalOpen={setDeleteModalOpen}
-        isDarkMode={isDarkMode}
-        arrayOfTitle={arrayOfTitle}
-      />
+      
 
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
@@ -1230,6 +1261,32 @@ const TaskManager = () => {
         handleDateChange={handleDateChange}
         isDarkMode={isDarkMode}
       />
+    
+        <TaskList
+        filteredTasks={filteredTasks}
+        setEditingTask={setEditingTask}
+        setModalOpen={setModalOpen}
+        handleToggleCompletion={handleToggleCompletion}
+        setTaskToDelete={setTaskToDelete}
+        setDeleteModalOpen={setDeleteModalOpen}
+        isDarkMode={isDarkMode}
+        arrayOfTitle={arrayOfTitle}
+      />
+        <div className="flex items-center text-[20px] md:text-[35px] mb-4">
+      <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>| Task : </span>
+      <span className="ml-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+        <Typewriter
+          words={arrayOfTitle.length > 0 ? arrayOfTitle : ["No tasks yet!"]}
+          loop={0} // Loop indefinitely
+          cursor
+          cursorStyle="|"
+          cursorColor={isDarkMode ? "#a78bfa" : "#8E44AD"} // Dynamic cursor color
+          typeSpeed={100}
+          deleteSpeed={50}
+          delaySpeed={2000} 
+        />
+      </span>
+    </div>
     </div>
   );
 };
