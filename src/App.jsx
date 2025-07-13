@@ -29,13 +29,13 @@ function MainLayout({ children }) {
 
   return (
     // Apply 'dark' class to the root div if dark mode is active for Tailwind CSS
-    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen  flex flex-col ${isDarkMode ? 'dark' : ''}`}>
       {/* Navbar receives theme props and the sidebar toggler */}
       <Navbar
         toggleSidebar={handleToggleSidebar} // Pass the function to open/close sidebar from Navbar
       />
 
-      <div className="flex flex-1 pt-16"> {/* pt-16 for padding below the fixed Navbar */}
+      <div className="flex flex-1 "> {/* pt-16 for padding below the fixed Navbar */}
         {/* TSidebar receives theme props, its open state, and the toggler */}
         <TSidebar
           isDarkMode={isDarkMode}
@@ -45,7 +45,7 @@ function MainLayout({ children }) {
         {/* <FullScreenLoader/> */}
 {/* <CosmicLoader isLoading={true} /> */}
         {/* Main content area, adjusts margin based on sidebar presence on medium screens and up */}
-        <main className={`flex-1 p-2 md:p-6 overflow-x-auto transition-all duration-300
+        <main className={`flex-1 p-2 md:p-6  pt-16 overflow-x-auto transition-all duration-300
           ${isDarkMode ? 'bg-gray-900' : 'bg-[#f8f9fa]'}
           md:ml-1`}> {/* On medium screens and up, add left margin for the static sidebar */}
           {children}
