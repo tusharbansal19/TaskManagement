@@ -6,7 +6,7 @@ const Footer = ({ isDarkMode }) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className={`py-6 border-t transition-colors duration-300
+    <footer className={`py-6 pb-20 border-t transition-colors duration-300
       ${isDarkMode ? 'bg-gray-900 border-gray-700 text-gray-400' : 'bg-gray-800 border-gray-200 text-gray-300'}`}>
       <div className="container mx-auto text-center px-4">
         {/* Social Icons */}
