@@ -90,7 +90,7 @@ function App() {
                 </ProtectedSignUP>
               } />
               {/* Default route for Dashboard, protected for authenticated users */}
-              <Route path="/" element={
+              <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <MainLayout>
                     <Dashboard />
@@ -105,7 +105,13 @@ function App() {
                   </MainLayout>
                 </ProtectedRoute>
               } />
-              
+               <Route path="/" element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <TaskManager />
+                  </MainLayout>
+                </ProtectedRoute>
+              } />
               {/* Catch-all route for 404 Not Found pages */}
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

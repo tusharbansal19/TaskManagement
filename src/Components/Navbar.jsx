@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, NavLink } from "react-router-dom";
 import { useAuth } from "../Auth/AuthProtectComponents"; // Assuming this path is correct
-import { Menu, X, Sun, Moon, LogOut, UserCircle } from 'lucide-react';
+import { Menu, X, Sun, Moon, LogOut, UserCircle, LayoutGrid, CheckSquare, Users, Settings } from 'lucide-react';
 import { useTheme } from '../ThemeContext'; // Assuming this path is correct
 import Avatar from './Avatar';
 
@@ -29,9 +29,8 @@ const Navbar = ({ toggleSidebar }) => {
   const [isHovering, setIsHovering] = useState(false);
 
   const menuItems = [
-    { label: "Overview", path: "/" },
     { label: "Dashboard", path: "/dashboard" },
-    { label: "Projects", path: "/projects" },
+    
     { label: "Tasks", path: "/tasks" },
     { label: "Team", path: "/team" },
     { label: "Settings", path: "/settings" },
@@ -165,122 +164,166 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <nav className={`fixed z-[100] w-full p-4 shadow-md transition-all duration-300
-      ${isDarkMode ? 'bg-gray-900/95 backdrop-blur-md text-gray-100 shadow-lg' : 'bg-white/95 backdrop-blur-md text-gray-900 shadow-md'}
-      ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
-      style={{ willChange: 'transform' }}>
-      <div className="relative z-10 flex justify-between items-center max-w-7xl mx-auto">
-        {/* Logo */}
-        <Link to="/" className="flex items-center group">
-          <img
-            src="https://placehold.co/40x40/8B5CF6/FFFFFF?text=Logo"
-            alt="Logo"
-            className="h-10 w-10 rounded-full border-2 border-purple-500 group-hover:border-blue-400 transition-colors duration-300 transform group-hover:rotate-6"
-          />
-          <span className={`ml-3 text-2xl font-extrabold transition-colors duration-300
-            ${isDarkMode ? 'text-white' : 'text-gray-800'}
-            text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600`}>
-            TaskFlow
-          </span>
-        </Link>
+    <>
+      <nav className={`fixed z-[100] w-full p-4 shadow-md transition-all duration-300
+        ${isDarkMode ? 'bg-gray-900/95 backdrop-blur-md text-gray-100 shadow-lg' : 'bg-white/95 backdrop-blur-md text-gray-900 shadow-md'}
+        ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
+        style={{ willChange: 'transform' }}>
+        <div className="relative z-10 flex justify-between items-center max-w-7xl mx-auto">
+          {/* Logo */}
+          <Link to="/" className="flex items-center group">
+            <img
+              src="https://placehold.co/40x40/8B5CF6/FFFFFF?text=Logo"
+              alt="Logo"
+              className="h-10 w-10 rounded-full border-2 border-purple-500 group-hover:border-blue-400 transition-colors duration-300 transform group-hover:rotate-6"
+            />
+            <span className={`ml-3 text-2xl font-extrabold transition-colors duration-300
+              ${isDarkMode ? 'text-white' : 'text-gray-800'}
+              text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600`}>
+              TaskFlow
+            </span>
+          </Link>
 
-        {/* Hamburger Icon for Mobile - Toggles Sidebar */}
-        <button
-          className={`block md:hidden p-2 rounded-md transition-colors duration-300
-            ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`}
-          onClick={toggleSidebar}
-          aria-label="Toggle sidebar"
-        >
-          <Menu size={24} />
-        </button>
-
-        {/* Desktop Navigation Menu */}
-        <div className="hidden md:flex items-center space-x-6 relative" ref={navRef}>
-          {/* Enhanced Moving Highlight Rectangle */}
-          <div
-            className={`absolute rounded-xl transition-all duration-500 ease-out z-10
-              ${isDarkMode 
-                ? 'bg-gradient-to-r from-blue-500/30 to-purple-500/30 shadow-lg shadow-blue-500/20' 
-                : 'bg-gradient-to-r from-blue-500/25 to-purple-500/25 shadow-lg shadow-blue-500/15'
-              }`}
-            style={{
-              left: highlightStyle.left,
-              width: highlightStyle.width,
-              opacity: highlightStyle.opacity,
-              height: HIGHLIGHT_RECT_HEIGHT,
-              top: '50%',
-              transform: `translateY(-50%) ${highlightStyle.transform}`,
-              transformOrigin: highlightStyle.transformOrigin,
-              backdropFilter: 'blur(8px)',
-              border: isDarkMode ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid rgba(59, 130, 246, 0.15)'
-            }}
-          ></div>
-
-          {menuItems.map((item) => (
-            <NavLink
-              key={item.label}
-              to={item.path}
-              className={({ isActive }) =>
-                `relative text-lg font-medium transition-all duration-300 px-4 py-2 rounded-lg z-20 flex items-center justify-center min-h-[${HIGHLIGHT_RECT_HEIGHT}px]
-                ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
-                ${isActive ? (isDarkMode ? 'text-blue-400 active-nav-link font-semibold' : 'text-blue-600 active-nav-link font-semibold') : ''}
-                hover:scale-105 transform transition-transform duration-200`
-              }
-              onMouseEnter={(e) => handleNavItemHover(e, true)}
-              onMouseLeave={(e) => handleNavItemHover(e, false)}
-            >
-              {item.label}
-            </NavLink>
-          ))}
-
-          {/* Theme Toggle Button (Desktop) */}
+          {/* Hamburger Icon for Mobile - Toggles Sidebar */}
           <button
-            onClick={toggleDarkMode}
-            className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95
-              ${isDarkMode ? 'bg-gray-700/50 text-yellow-300 hover:bg-gray-600/70' : 'bg-gray-100/70 text-yellow-600 hover:bg-gray-200/80'}`}
-            aria-label="Toggle dark mode"
+            className={`block md:hidden p-2 rounded-md transition-colors duration-300
+              ${isDarkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'}`}
+            onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
           >
-            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            <Menu size={24} />
           </button>
 
-          {/* Profile Image and Dropdown (Desktop) */}
-          <div className="relative ml-4" ref={dropdownRef}>
-            <Avatar
-              size="md"
-              onClick={() => setDropdownOpen((prev) => !prev)}
-              showTooltip={true}
-              className="cursor-pointer"
-            />
-            {dropdownOpen && (
-              <div
-                className={`absolute top-12 right-0 w-48 rounded-xl shadow-xl p-3 transition-all duration-300 transform origin-top-right animate-scale-in
-                  ${isDarkMode ? 'bg-gray-800/95 backdrop-blur-md text-gray-100 border border-gray-700/50' : 'bg-white/95 backdrop-blur-md text-gray-900 border border-gray-200/50'}`}
+          {/* Desktop Navigation Menu */}
+          <div className="hidden md:flex items-center space-x-6 relative" ref={navRef}>
+            {/* Enhanced Moving Highlight Rectangle */}
+            <div
+              className={`absolute rounded-xl transition-all duration-500 ease-out z-10
+                ${isDarkMode 
+                  ? 'bg-gradient-to-r from-blue-500/30 to-purple-500/30 shadow-lg shadow-blue-500/20' 
+                  : 'bg-gradient-to-r from-blue-500/25 to-purple-500/25 shadow-lg shadow-blue-500/15'
+                }`}
+              style={{
+                left: highlightStyle.left,
+                width: highlightStyle.width,
+                opacity: highlightStyle.opacity,
+                height: HIGHLIGHT_RECT_HEIGHT,
+                top: '50%',
+                transform: `translateY(-50%) ${highlightStyle.transform}`,
+                transformOrigin: highlightStyle.transformOrigin,
+                backdropFilter: 'blur(8px)',
+                border: isDarkMode ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid rgba(59, 130, 246, 0.15)'
+              }}
+            ></div>
+
+            {menuItems.map((item) => (
+              <NavLink
+                key={item.label}
+                to={item.path}
+                className={({ isActive }) =>
+                  `relative text-lg font-medium transition-all duration-300 px-4 py-2 rounded-lg z-20 flex items-center justify-center min-h-[${HIGHLIGHT_RECT_HEIGHT}px]
+                  ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}
+                  ${isActive ? (isDarkMode ? 'text-blue-400 active-nav-link font-semibold' : 'text-blue-600 active-nav-link font-semibold') : ''}
+                  hover:scale-105 transform transition-transform duration-200`
+                }
+                onMouseEnter={(e) => handleNavItemHover(e, true)}
+                onMouseLeave={(e) => handleNavItemHover(e, false)}
               >
-                <div className="flex items-center mb-3">
-                  <Avatar size="sm" className="mr-3" />
-                  <div>
-                    <p className={`font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
-                      {localStorage.getItem("username") || localStorage.getItem("email")?.split('@')[0] || "Guest User"}
-                    </p>
-                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      {localStorage.getItem("email") || "guest@example.com"}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className={`w-full flex items-center justify-center px-3 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95
-                    ${isDarkMode ? 'bg-red-600/80 hover:bg-red-700/90 text-white' : 'bg-red-500/80 hover:bg-red-600/90 text-white'}`}
+                {item.label}
+              </NavLink>
+            ))}
+
+            {/* Theme Toggle Button (Desktop) */}
+            <button
+              onClick={toggleDarkMode}
+              className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95
+                ${isDarkMode ? 'bg-gray-700/50 text-yellow-300 hover:bg-gray-600/70' : 'bg-gray-100/70 text-yellow-600 hover:bg-gray-200/80'}`}
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+
+            {/* Profile Image and Dropdown (Desktop) */}
+            <div className="relative ml-4" ref={dropdownRef}>
+              <Avatar
+                size="md"
+                onClick={() => setDropdownOpen((prev) => !prev)}
+                showTooltip={true}
+                className="cursor-pointer"
+              />
+              {dropdownOpen && (
+                <div
+                  className={`absolute top-12 right-0 w-48 rounded-xl shadow-xl p-3 transition-all duration-300 transform origin-top-right animate-scale-in
+                    ${isDarkMode ? 'bg-gray-800/95 backdrop-blur-md text-gray-100 border border-gray-700/50' : 'bg-white/95 backdrop-blur-md text-gray-900 border border-gray-200/50'}`}
                 >
-                  <LogOut size={16} className="mr-2" />
-                  Logout
-                </button>
-              </div>
-            )}
+                  <div className="flex items-center mb-3">
+                    <Avatar size="sm" className="mr-3" />
+                    <div>
+                      <p className={`font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                        {localStorage.getItem("username") || localStorage.getItem("email")?.split('@')[0] || "Guest User"}
+                      </p>
+                      <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        {localStorage.getItem("email") || "guest@example.com"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className={`w-full flex items-center justify-center px-3 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95
+                      ${isDarkMode ? 'bg-red-600/80 hover:bg-red-700/90 text-white' : 'bg-red-500/80 hover:bg-red-600/90 text-white'}`}
+                  >
+                    <LogOut size={16} className="mr-2" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+      </nav>
+
+      {/* Bottom Navigation Bar for Mobile (fixed at bottom, outside main nav) */}
+      <div className="fixed bottom-0 left-0 w-full z-[90] md:hidden block bg-white dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 shadow-lg">
+        <div className="flex justify-around items-center h-16 relative">
+          {[
+            { label: 'Dashboard', path: '/dashboard', icon: LayoutGrid },
+            { label: 'Tasks', path: '/tasks', icon: CheckSquare },
+            { label: 'Team', path: '/team', icon: Users },
+            // { label: 'Settings', path: '/settings', icon: Settings },
+          ].map((item) => {
+            const isActive = window.location.pathname === item.path;
+            const Icon = item.icon;
+            return (
+              <NavLink
+                key={item.label}
+                to={item.path}
+                className="flex flex-col items-center justify-center flex-1 h-full relative group"
+                style={{ minWidth: 0 }}
+              >
+                {/* Circular indicator above icon if active */}
+                <span className={`absolute -top-2 left-1/2 -translate-x-1/2 transition-all duration-300 ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-75'} pointer-events-none`}>
+                  <span className={`w-3 h-3 rounded-full ${isActive ? 'bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg' : ''} block`}></span>
+                </span>
+                <Icon size={24} className={`transition-colors duration-300 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400'}`} />
+                <span className={`text-xs mt-1 font-medium transition-colors duration-300 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>{item.label}</span>
+              </NavLink>
+            );
+          })}
+          {/* Avatar as last item, links to settings/profile */}
+          <NavLink
+            to="/settings"
+            className="flex flex-col items-center justify-center flex-1 h-full relative group"
+            style={{ minWidth: 0 }}
+          >
+            <span className={`absolute -top-2 left-1/2 -translate-x-1/2 transition-all duration-300 ${window.location.pathname === '/settings' ? 'opacity-100 scale-100' : 'opacity-0 scale-75'} pointer-events-none`}>
+              <span className={`w-3 h-3 rounded-full ${window.location.pathname === '/settings' ? 'bg-gradient-to-r from-blue-500 to-purple-500 shadow-lg' : ''} block`}></span>
+            </span>
+            <Avatar size="sm" className={`transition-all duration-300 ${window.location.pathname === '/settings' ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`} />
+            <span className={`text-xs mt-1 font-medium transition-colors duration-300 ${window.location.pathname === '/settings' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>Profile</span>
+          </NavLink>
+        </div>
       </div>
-    </nav>
+    </>
   );
 };
 
